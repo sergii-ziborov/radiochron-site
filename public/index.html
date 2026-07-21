@@ -33,7 +33,12 @@
   "license": ["https://opensource.org/licenses/MIT", "https://www.apache.org/licenses/LICENSE-2.0"],
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "author": { "@type": "Person", "name": "Sergii Ziborov", "url": "https://github.com/sergii-ziborov" },
-  "sameAs": [ "https://github.com/sergii-ziborov/radiochron" ]
+  "sameAs": [
+    "https://github.com/sergii-ziborov/radiochron",
+    "https://github.com/sergii-ziborov/radiochron-mcp",
+    "https://github.com/sergii-ziborov/radiochron-js",
+    "https://github.com/sergii-ziborov/radiochron-site"
+  ]
 }
 </script>
 <link rel="stylesheet" href="/styles.css?v=1">
@@ -105,7 +110,7 @@
 <span class="g">$</span> cargo add radiochron --git https://github.com/sergii-ziborov/radiochron
 
 <span class="c"># MCP server — build once, point your client at the binary</span>
-<span class="g">$</span> git clone https://github.com/sergii-ziborov/radiochron &amp;&amp; cd radiochron
+<span class="g">$</span> git clone https://github.com/sergii-ziborov/radiochron-mcp &amp;&amp; cd radiochron-mcp
 <span class="g">$</span> cargo build --release      <span class="c"># → target/release/radiochron.exe</span>
 <span class="g">$</span> claude mcp add radiochron -- ./target/release/radiochron.exe</pre>
     </div>
@@ -207,13 +212,16 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
     <div class="grid g2">
       <div class="card cut"><h3>Rust library</h3>
         <div class="m"><code>radiochron</code> — collectors, 802.11 analysis, the chronicle.
-        What an IoT agent, exporter or CLI embeds. MIT/Apache-2.0, three dependencies.</div></div>
+        What an IoT agent, exporter or CLI embeds. MIT/Apache-2.0, three dependencies.
+        <a href="https://github.com/sergii-ziborov/radiochron">Source</a>.</div></div>
       <div class="card cut"><h3>MCP server</h3>
         <div class="m"><code>radiochron-mcp</code> — ten typed tools + five resources over stdio.
-        Point Claude, Codex or any MCP client at one binary. No config, no arguments.</div></div>
+        Point Claude, Codex or any MCP client at one binary. No config, no arguments.
+        <a href="https://github.com/sergii-ziborov/radiochron-mcp">Source</a>.</div></div>
       <div class="card cut"><h3>npm launcher <span style="color:var(--cyan);font-size:.7rem">PUBLISH PENDING</span></h3>
-        <div class="m">The prebuilt MCP binary launcher already lives in <code>npm/</code> with
-        version/commit provenance checks. Direct Node.js bindings via napi-rs remain planned.</div></div>
+        <div class="m">The <a href="https://github.com/sergii-ziborov/radiochron-js">standalone package</a>
+        carries a prebuilt MCP binary with version/commit provenance checks. Direct Node.js
+        bindings via napi-rs remain planned.</div></div>
       <div class="card cut"><h3>Desktop app</h3>
         <div class="m"><a href="/electron">RadioChron Desktop</a> —
         evidence timelines, baseline runs and network inventory on the same engine.
