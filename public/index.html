@@ -30,7 +30,7 @@
   "operatingSystem": "Windows, Linux, macOS",
   "description": "Pure-Rust Wi-Fi diagnostics library, fleet agent and MCP server with native WLAN API, nl80211 and CoreWLAN collectors.",
   "url": "https://radiochron.com",
-  "license": ["https://opensource.org/licenses/MIT", "https://www.apache.org/licenses/LICENSE-2.0"],
+  "license": "https://radiochron.com/license",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "author": { "@type": "Person", "name": "Sergii Ziborov", "url": "https://github.com/sergii-ziborov" },
   "sameAs": [
@@ -229,11 +229,12 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
       <div class="card cut"><h3>MCP server</h3>
         <div class="m"><code>radiochron-mcp</code> — ten portable typed tools + five resources over stdio;
         Windows adds WLAN AutoConfig history. Point Claude, Codex or any MCP client at one binary.
-        <a href="https://github.com/sergii-ziborov/radiochron-mcp">Source</a>.</div></div>
-      <div class="card cut"><h3>Node/npm library <span style="color:var(--cyan);font-size:.7rem">PUBLISH PENDING</span></h3>
+        MIT licensed. <a href="https://github.com/sergii-ziborov/radiochron-mcp">Source</a>.</div></div>
+      <div class="card cut"><h3>Node/npm library</h3>
         <div class="m">The <a href="https://github.com/sergii-ziborov/radiochron-js">standalone package</a>
         is the application API over the Rust core for Windows x64, Linux x64, Intel Mac and Apple
-        Silicon. It packages a provenance-checked native Node adapter and is independent of the MCP server.</div></div>
+        Silicon. It packages a revision-checked native Node adapter, is independent of the MCP server,
+        and is MIT licensed. <a href="https://www.npmjs.com/package/radiochron">Install from npm</a>.</div></div>
       <div class="card cut"><h3>Fleet agent <span style="color:var(--cyan);font-size:.7rem">UNRELEASED</span></h3>
         <div class="m"><a href="https://github.com/sergii-ziborov/radiochron-agent">radiochron-agent</a>
         — Linux/Windows/macOS collector service with at-least-once offline delivery, MQTT, OTLP and
@@ -307,7 +308,8 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
       <li class="done"><b>SHIPPED IN SOURCE</b>Fleet enrollment, signed revisioned profiles, alarms, connectivity uptime, deterministic signed OTA rollout and rollback</li>
       <li class="plan"><b>PLANNED</b>Cellular collectors — RSRP/RSRQ/SINR via Windows MBN and Linux ModemManager; for a field device the radio that matters may not be Wi-Fi</li>
       <li class="done"><b>SHIPPED IN SOURCE</b>Standalone radiochron-js Node API and RadioChron Desktop installers for Windows, Intel Mac and Apple Silicon</li>
-      <li class="plan"><b>PLANNED</b>crates.io/npm/agent package publication and signed desktop releases</li>
+      <li class="done"><b>PUBLISHED</b>radiochron on crates.io plus radiochron and radiochron-mcp on npm</li>
+      <li class="plan"><b>PLANNED</b>Agent packages and signed desktop releases</li>
       <li class="plan"><b>PLANNED</b>Developer ID signing/notarization and managed TCC deployment for production Apple fleets</li>
     </ul>
   </div>
@@ -319,7 +321,7 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
     <div class="cols">
       <a href="https://github.com/sergii-ziborov/radiochron">github.com/sergii-ziborov/radiochron</a>
       <a href="/electron">desktop app</a>
-      <a href="/license">MIT / Apache-2.0</a>
+      <a href="/license">licenses</a>
       <a href="/privacy">privacy</a>
     </div>
     <div class="note">No telemetry. No cookies. No analytics. Nothing leaves your machine — the
