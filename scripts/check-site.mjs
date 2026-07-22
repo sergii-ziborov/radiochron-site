@@ -44,19 +44,41 @@ for (const file of htmlFiles) {
       throw new Error(`${file} links to missing local file: ${match[1]}`);
     }
   }
+
+  for (const retiredSurface of ["radiochron-agent", "radiochron-fleet"]) {
+    if (source.includes(retiredSurface)) {
+      throw new Error(`${file} still promotes retired surface: ${retiredSurface}`);
+    }
+  }
 }
 
 const index = await readFile(path.join(publicDir, "index.html"), "utf8");
 for (const repository of [
   "radiochron",
-  "radiochron-agent",
-  "radiochron-fleet",
   "radiochron-mcp",
   "radiochron-js",
+  "radiochron-electron",
   "radiochron-site",
 ]) {
   const url = `https://github.com/sergii-ziborov/${repository}`;
   if (!index.includes(url)) throw new Error(`index.html is missing repository link: ${url}`);
+}
+
+
+const electron = await readFile(path.join(publicDir, "electron.html"), "utf8");
+for (const asset of [
+  "RadioChron-Desktop-0.1.0-Windows-x64.exe",
+  "RadioChron-Desktop-0.1.0-macOS-Apple-Silicon.dmg",
+  "RadioChron-Desktop-0.1.0-macOS-Intel.dmg",
+]) {
+  if (!electron.includes(asset)) throw new Error(`electron.html is missing download: ${asset}`);
+}
+
+for (const screenshot of ["overview", "map", "network", "channels"]) {
+  const path = `/screenshots/radiochron-desktop-${screenshot}.png`;
+  if (!index.includes(path) || !electron.includes(path)) {
+    throw new Error(`desktop screenshot is not shown on both product pages: ${path}`);
+  }
 }
 
 if (/<script\s+[^>]*src=/i.test(index)) {

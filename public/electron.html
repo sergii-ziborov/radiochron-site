@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://radiochron.com/electron">
 <meta property="og:image" content="https://radiochron.com/screenshots/radiochron-desktop-overview.png">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<link rel="stylesheet" href="/styles.css?v=2">
+<link rel="stylesheet" href="/styles.css?v=3">
 </head>
 <body>
 
@@ -27,7 +27,7 @@
     <a href="/#surfaces">products</a>
     <a href="#screenshots">screens</a>
     <a href="#architecture">architecture</a>
-    <a href="#installers">installers</a>
+    <a href="#download">download</a>
     <a href="/privacy">privacy</a>
     <a href="https://github.com/sergii-ziborov/radiochron-electron">github</a>
   </nav>
@@ -41,6 +41,10 @@
     <p style="margin-top:20px;font-size:1.1rem">Intermittent Wi-Fi is hard to prove after the
       link recovers. <strong>RadioChron Desktop</strong> records baselines, compares observations,
       maps nearby radios, explains channel pressure, and keeps diagnostic evidence local.</p>
+    <div class="actions">
+      <a class="button primary" href="#download">Download beta</a>
+      <a class="button" href="#screenshots">See screenshots</a>
+    </div>
     <span class="chip">WINDOWS X64</span><span class="chip">INTEL MAC</span><span class="chip">APPLE SILICON</span>
   </div>
 </section>
@@ -100,26 +104,34 @@
   </div>
 </section>
 
-<section class="band" id="installers">
+<section class="band" id="download">
   <div class="wrap">
-    <div class="tag">//: 04 — INSTALLERS</div>
-    <h2>Built in CI, not released yet</h2>
-    <p>The repository builds an assisted Windows NSIS installer plus DMG and ZIP artifacts for
-      Intel Mac and Apple Silicon. They remain CI artifacts while signing, notarization and final
-      release policy are unfinished.</p>
+    <div class="tag">//: 04 — DOWNLOAD BETA</div>
+    <h2>Desktop installers</h2>
+    <p>Download the current open-source beta. These builds are produced from the tested repository
+      commit and include the native <code>radiochron-js</code> adapter.</p>
+    <div class="grid g3 download-grid">
+      <div class="card cut"><h3>Windows x64</h3><div class="m">Assisted NSIS installer (.exe)</div><div class="actions"><a class="button primary" href="https://github.com/sergii-ziborov/radiochron-electron/releases/download/desktop-v0.1.0-beta.1/RadioChron-Desktop-0.1.0-Windows-x64.exe">Download</a></div></div>
+      <div class="card cut"><h3>Mac — Apple Silicon</h3><div class="m">DMG for M1, M2, M3 and newer</div><div class="actions"><a class="button primary" href="https://github.com/sergii-ziborov/radiochron-electron/releases/download/desktop-v0.1.0-beta.1/RadioChron-Desktop-0.1.0-macOS-Apple-Silicon.dmg">Download</a></div></div>
+      <div class="card cut"><h3>Mac — Intel</h3><div class="m">DMG for Intel-based Macs</div><div class="actions"><a class="button primary" href="https://github.com/sergii-ziborov/radiochron-electron/releases/download/desktop-v0.1.0-beta.1/RadioChron-Desktop-0.1.0-macOS-Intel.dmg">Download</a></div></div>
+    </div>
+    <p class="beta-warning"><strong>Unsigned beta:</strong> Windows SmartScreen and macOS Gatekeeper
+      may warn. The macOS builds are not Developer ID signed or notarized yet. Verify the SHA-256
+      file from the <a href="https://github.com/sergii-ziborov/radiochron-electron/releases/tag/desktop-v0.1.0-beta.1">release page</a> before testing.</p>
+    <h3 style="margin-top:34px">Build it yourself</h3>
     <div class="term cut">
       <div class="bar"><i></i><i></i><i></i></div>
 <pre><span class="g">$</span> git clone https://github.com/sergii-ziborov/radiochron-electron
 <span class="g">$</span> cd radiochron-electron
 <span class="g">$</span> npm ci
-<span class="g">$</span> npm run check          <span class="c"># typecheck + 75 tests</span>
+<span class="g">$</span> npm run check          <span class="c"># typecheck + tests</span>
 <span class="g">$</span> npm run native:build
 <span class="g">$</span> npm run dist:win -- --x64
 <span class="g">$</span> npm run dist:mac -- --arm64</pre>
     </div>
     <ul class="h">
       <li>macOS uses CoreWLAN and requires Location Services to expose SSID/BSSID scan data.</li>
-      <li>Unsigned local artifacts are for testing; public Apple downloads require Developer ID signing and notarization.</li>
+      <li>Beta artifacts are for testing; production Apple downloads require Developer ID signing and notarization.</li>
       <li>Not a packet sniffer, geolocation product or offensive vulnerability scanner.</li>
     </ul>
   </div>
