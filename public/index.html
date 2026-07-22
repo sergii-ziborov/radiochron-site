@@ -38,6 +38,7 @@
     "https://github.com/sergii-ziborov/radiochron-fleet",
     "https://github.com/sergii-ziborov/radiochron-mcp",
     "https://github.com/sergii-ziborov/radiochron-js",
+    "https://github.com/sergii-ziborov/radiochron-electron",
     "https://github.com/sergii-ziborov/radiochron-site"
   ]
 }
@@ -229,10 +230,10 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
         <div class="m"><code>radiochron-mcp</code> — ten portable typed tools + five resources over stdio;
         Windows adds WLAN AutoConfig history. Point Claude, Codex or any MCP client at one binary.
         <a href="https://github.com/sergii-ziborov/radiochron-mcp">Source</a>.</div></div>
-      <div class="card cut"><h3>npm launcher <span style="color:var(--cyan);font-size:.7rem">PUBLISH PENDING</span></h3>
+      <div class="card cut"><h3>Node/npm library <span style="color:var(--cyan);font-size:.7rem">PUBLISH PENDING</span></h3>
         <div class="m">The <a href="https://github.com/sergii-ziborov/radiochron-js">standalone package</a>
-        carries provenance-checked binaries for Windows x64, Linux x64, Intel Mac and Apple Silicon.
-        Direct Node.js bindings via napi-rs remain planned.</div></div>
+        is the application API over the Rust core for Windows x64, Linux x64, Intel Mac and Apple
+        Silicon. It packages a provenance-checked native Node adapter and is independent of the MCP server.</div></div>
       <div class="card cut"><h3>Fleet agent <span style="color:var(--cyan);font-size:.7rem">UNRELEASED</span></h3>
         <div class="m"><a href="https://github.com/sergii-ziborov/radiochron-agent">radiochron-agent</a>
         — Linux/Windows/macOS collector service with at-least-once offline delivery, MQTT, OTLP and
@@ -241,9 +242,10 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
         <div class="m"><a href="https://github.com/sergii-ziborov/radiochron-fleet">radiochron-fleet</a>
         — enrollment, Ed25519-signed profiles, fleet uptime, alarms, deterministic OTA rollout and rollback policy.
         It upgrades independently and is not a core dependency.</div></div>
-      <div class="card cut"><h3>Desktop app</h3>
+      <div class="card cut"><h3>Desktop app <span style="color:var(--cyan);font-size:.7rem">UNRELEASED</span></h3>
         <div class="m"><a href="/electron">RadioChron Desktop</a> —
-        evidence timelines, baseline runs and network inventory on the same engine.
+        Windows/macOS baselines, relative RF map, channel pressure and network inventory. It imports
+        <code>radiochron-js</code>; CI builds NSIS, Intel Mac and Apple Silicon artifacts.
         <a href="https://github.com/sergii-ziborov/radiochron-electron">Source</a>.</div></div>
     </div>
   </div>
@@ -304,7 +306,8 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
       <li class="done"><b>SHIPPED IN SOURCE</b>Offline agent with systemd/launchd, MQTT TLS/mTLS, OTLP/HTTPS, Prometheus and radio-to-Internet staged diagnosis</li>
       <li class="done"><b>SHIPPED IN SOURCE</b>Fleet enrollment, signed revisioned profiles, alarms, connectivity uptime, deterministic signed OTA rollout and rollback</li>
       <li class="plan"><b>PLANNED</b>Cellular collectors — RSRP/RSRQ/SINR via Windows MBN and Linux ModemManager; for a field device the radio that matters may not be Wi-Fi</li>
-      <li class="plan"><b>PLANNED</b>Direct Node.js bindings via napi-rs; crates.io/npm/agent package publish</li>
+      <li class="done"><b>SHIPPED IN SOURCE</b>Standalone radiochron-js Node API and RadioChron Desktop installers for Windows, Intel Mac and Apple Silicon</li>
+      <li class="plan"><b>PLANNED</b>crates.io/npm/agent package publication and signed desktop releases</li>
       <li class="plan"><b>PLANNED</b>Developer ID signing/notarization and managed TCC deployment for production Apple fleets</li>
     </ul>
   </div>

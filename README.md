@@ -10,8 +10,8 @@ The deployable files live in `public/`. The site uses no client-side JavaScript,
 - [`radiochron-agent`](https://github.com/sergii-ziborov/radiochron-agent) — offline-first collector daemon
 - [`radiochron-fleet`](https://github.com/sergii-ziborov/radiochron-fleet) — fleet control plane
 - [`radiochron-mcp`](https://github.com/sergii-ziborov/radiochron-mcp) — MCP server
-- [`radiochron-js`](https://github.com/sergii-ziborov/radiochron-js) — npm binary launcher
-- [`radiochron-electron`](https://github.com/sergii-ziborov/radiochron-electron) — desktop application
+- [`radiochron-js`](https://github.com/sergii-ziborov/radiochron-js) — standalone Node/npm library over the Rust core
+- [`radiochron-electron`](https://github.com/sergii-ziborov/radiochron-electron) — separate Windows/macOS desktop application using `radiochron-js`
 
 ## Verify and run
 

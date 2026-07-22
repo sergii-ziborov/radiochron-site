@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RadioChron Desktop — evidence timelines and network inventory</title>
-<meta name="description" content="RadioChron Desktop is the Electron app on the same Rust engine: baseline runs, run comparison, evidence timelines, device inventory and diagnostics bundles for support tickets.">
+<title>RadioChron Desktop — local Wi-Fi evidence for Windows and macOS</title>
+<meta name="description" content="RadioChron Desktop uses the radiochron-js Node library and RadioChron Rust core for local Wi-Fi baselines, RF maps, channel analysis and support evidence on Windows and macOS.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://radiochron.com/electron">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="RadioChron">
 <meta property="og:title" content="RadioChron Desktop — the chronicle, on screen">
-<meta property="og:description" content="Baseline runs, run comparison, evidence timelines and network inventory — a desktop client of the same engine an AI assistant drives.">
+<meta property="og:description" content="Local Wi-Fi baselines, RF maps, channel pressure and network evidence on Windows and macOS.">
 <meta property="og:url" content="https://radiochron.com/electron">
-<meta property="og:image" content="https://radiochron.com/og.png">
+<meta property="og:image" content="https://radiochron.com/screenshots/radiochron-desktop-overview.png">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<link rel="stylesheet" href="/styles.css?v=1">
+<link rel="stylesheet" href="/styles.css?v=2">
 </head>
 <body>
 
@@ -24,13 +24,10 @@
     RADIOCHRON <span class="v">DESKTOP</span>
   </a>
   <nav>
-    <a href="/#verdict">verdict</a>
-    <a href="/#chronicle">chronicle</a>
-    <a href="/#devices">devices</a>
-    <a href="/#surfaces">surfaces</a>
-    <a href="/#tools">mcp</a>
-    <a href="/#roadmap">roadmap</a>
-    <a href="/electron">desktop</a>
+    <a href="/#surfaces">products</a>
+    <a href="#screenshots">screens</a>
+    <a href="#architecture">architecture</a>
+    <a href="#installers">installers</a>
     <a href="/privacy">privacy</a>
     <a href="https://github.com/sergii-ziborov/radiochron-electron">github</a>
   </nav>
@@ -41,83 +38,89 @@
     <div class="crumbs"><a href="/">radiochron.com</a> / <b>desktop</b></div>
     <div class="tag">//: THE CHRONICLE, ON SCREEN</div>
     <h1>Evidence you can<br>attach to a ticket</h1>
-    <p style="margin-top:20px;font-size:1.1rem">Intermittent Wi-Fi is hard to prove once the link
-      recovers. <strong>RadioChron Desktop</strong> turns transient failures into a record: baseline
-      runs, run-to-run comparison, event timelines with reconnect detection, and a local inventory
-      of every AP and device your machine has seen — all on the same Rust engine an AI assistant
-      drives, speaking the same protocol.</p>
+    <p style="margin-top:20px;font-size:1.1rem">Intermittent Wi-Fi is hard to prove after the
+      link recovers. <strong>RadioChron Desktop</strong> records baselines, compares observations,
+      maps nearby radios, explains channel pressure, and keeps diagnostic evidence local.</p>
+    <span class="chip">WINDOWS X64</span><span class="chip">INTEL MAC</span><span class="chip">APPLE SILICON</span>
   </div>
 </section>
 
-<section class="band k" id="capabilities">
+<section class="band k" id="screenshots">
   <div class="wrap">
-    <div class="tag">//: 01 — WHAT IT DOES</div>
-    <h2>Capabilities</h2>
-    <div class="grid g3">
-      <div class="card cut"><h3>Baseline runs</h3><div class="m">Capture a timed baseline of the
-        connection and environment; store runs locally in SQLite; compare any two to see what
-        changed between "it worked" and "it doesn't".</div></div>
-      <div class="card cut"><h3>Evidence timeline</h3><div class="m">WLAN AutoConfig events on a
-        timeline with reconnect-loop symptom detection — the story of the link, not a snapshot
-        of it.</div></div>
-      <div class="card cut"><h3>Network inventory</h3><div class="m">Every SSID/BSSID seen, with
-        real dBm, band and channel, security posture hints and OUI vendor enrichment. History of
-        when each was first and last seen.</div></div>
-      <div class="card cut"><h3>Relative RF view</h3><div class="m">A deterministic, signal-based
-        layout of the neighbourhood. Deliberately labelled a visualization — it does not claim
-        ranging or geolocation.</div></div>
-      <div class="card cut"><h3>Diagnostics bundles</h3><div class="m">One click packs runs,
-        events and analysis into a bundle for a support ticket. Redaction reminders included —
-        BSSIDs are location-identifying.</div></div>
-      <div class="card cut"><h3>Local-first</h3><div class="m">Everything stays on the machine.
-        No telemetry, no accounts, no cloud. External AI review exists only as an explicit,
-        opt-in action.</div></div>
+    <div class="tag">//: 01 — REAL APP, SYNTHETIC DATA</div>
+    <h2>Radio evidence without exposing a network</h2>
+    <p>These images are captured by Electron itself in a fixture mode that never reads the host.
+      SSIDs are invented, MAC addresses are locally administered, and addresses use
+      documentation-only ranges.</p>
+    <div class="shot-grid">
+      <figure><img src="/screenshots/radiochron-desktop-overview.png" alt="RadioChron Desktop overview showing synthetic Wi-Fi status"><figcaption>Overview — status, signal, exposure and collectors</figcaption></figure>
+      <figure><img src="/screenshots/radiochron-desktop-map.png" alt="RadioChron Desktop relative RF map with synthetic access points"><figcaption>Relative RF map — wide+ spread correction by default</figcaption></figure>
+      <figure><img src="/screenshots/radiochron-desktop-network.png" alt="RadioChron Desktop network view with documentation-only addresses"><figcaption>Network — controlled local diagnostics and scan identity</figcaption></figure>
+      <figure><img src="/screenshots/radiochron-desktop-channels.png" alt="RadioChron Desktop channel pressure view with synthetic access points"><figcaption>Channels — congestion and overlap evidence</figcaption></figure>
     </div>
   </div>
 </section>
 
-<section class="band" id="architecture">
+<section class="band" id="capabilities">
   <div class="wrap">
-    <div class="tag">//: 02 — ONE ENGINE, NOT TWO</div>
-    <h2>A client, like the assistant is</h2>
-    <p>The desktop app does not reimplement collection. It spawns the same <code>radiochron</code>
-      binary an MCP client uses and speaks the same JSON-RPC over stdio — so the scan you see in
-      the app and the scan an AI assistant reasons about are literally the same code path. When the
-      engine learns something new, both clients get it for free.</p>
-    <div class="flow cut"><pre>
-Windows WLAN / event log APIs
-        │
-   <b>radiochron</b> (Rust engine — collectors · analysis · chronicle)
-        │  MCP over stdio
-   ┌────┴─────────┐
-   │              │
-<b>AI assistant</b>   <b>RadioChron Desktop</b> (Electron/React)
-</pre></div>
-    <p style="margin-top:18px">The app's historical layers — runtime-compiled C# via PowerShell
-      <code>Add-Type</code> — are gone; native collection lives in the engine. napi-rs bindings
-      are planned so Node apps can import the library in-process instead of spawning it.</p>
+    <div class="tag">//: 02 — WHAT IT DOES</div>
+    <h2>Capabilities</h2>
+    <div class="grid g3">
+      <div class="card cut"><h3>Baseline runs</h3><div class="m">Capture a timed baseline of the connection and environment, retain it locally and compare runs.</div></div>
+      <div class="card cut"><h3>Evidence timeline</h3><div class="m">Reconnect and environment observations become a support-ready chronology, not just a snapshot.</div></div>
+      <div class="card cut"><h3>AP inventory</h3><div class="m">SSID/BSSID, dBm, band, channel, advertised security, BSS information elements and first/last seen history.</div></div>
+      <div class="card cut"><h3>Relative RF view</h3><div class="m">Deterministic signal-based layout with collision correction. It is visualization, not ranging or geolocation.</div></div>
+      <div class="card cut"><h3>Channel pressure</h3><div class="m">Explain crowded channels using live APs, signal mix, overlap and advertised BSS load.</div></div>
+      <div class="card cut"><h3>Local-first</h3><div class="m">No telemetry, accounts, cookies or cloud dependency. Export only when the operator asks.</div></div>
+    </div>
   </div>
 </section>
 
-<section class="band k" id="run">
+<section class="band k" id="architecture">
   <div class="wrap">
-    <div class="tag">//: 03 — RUN IT</div>
-    <h2>From source, today</h2>
-    <p>Portfolio beta: functional, honest about its edges, not yet a signed installer.
-      Windows 11, Node 22+.</p>
+    <div class="tag">//: 03 — SEPARATE REPOSITORIES, ONE CORE</div>
+    <h2>Electron consumes the Node library</h2>
+    <p>The desktop app imports <a href="https://github.com/sergii-ziborov/radiochron-js"><code>radiochron-js</code></a>
+      like any other Node application. That npm library packages a small native Node adapter linked
+      to the <a href="https://github.com/sergii-ziborov/radiochron"><code>radiochron</code></a> Rust IoT core.</p>
+    <div class="flow cut"><pre>
+<b>radiochron-electron</b> (Electron + React)
+        | import "radiochron"
+        v
+<b>radiochron-js</b> (Node/npm API)
+        | packaged radiochron-node-bridge
+        v
+<b>radiochron</b> (Rust IoT core)
+        |-- Windows Native WLAN
+        |-- Linux nl80211
+        `-- macOS CoreWLAN
+</pre></div>
+    <p style="margin-top:18px">Each component has its own repository and release lifecycle.
+      Other Node services can use <code>radiochron-js</code> without Electron.</p>
+  </div>
+</section>
+
+<section class="band" id="installers">
+  <div class="wrap">
+    <div class="tag">//: 04 — INSTALLERS</div>
+    <h2>Built in CI, not released yet</h2>
+    <p>The repository builds an assisted Windows NSIS installer plus DMG and ZIP artifacts for
+      Intel Mac and Apple Silicon. They remain CI artifacts while signing, notarization and final
+      release policy are unfinished.</p>
     <div class="term cut">
       <div class="bar"><i></i><i></i><i></i></div>
 <pre><span class="g">$</span> git clone https://github.com/sergii-ziborov/radiochron-electron
 <span class="g">$</span> cd radiochron-electron
-<span class="g">$</span> npm ci &amp;&amp; npm run check     <span class="c"># typecheck + 75 tests</span>
-<span class="g">$</span> npm run dev</pre>
+<span class="g">$</span> npm ci
+<span class="g">$</span> npm run check          <span class="c"># typecheck + 75 tests</span>
+<span class="g">$</span> npm run native:build
+<span class="g">$</span> npm run dist:win -- --x64
+<span class="g">$</span> npm run dist:mac -- --arm64</pre>
     </div>
     <ul class="h">
-      <li>Needs the MCP engine binary: a sibling <code>../radiochron-mcp</code> checkout built with
-        <code>cargo build --release</code>, or point <code>RADIOCHRON_MCP</code> at any
-        <code>radiochron.exe</code>.</li>
-      <li>Not a packet sniffer, not geolocation, not a vulnerability scanner — an incident
-        recorder and evidence notebook.</li>
+      <li>macOS uses CoreWLAN and requires Location Services to expose SSID/BSSID scan data.</li>
+      <li>Unsigned local artifacts are for testing; public Apple downloads require Developer ID signing and notarization.</li>
+      <li>Not a packet sniffer, geolocation product or offensive vulnerability scanner.</li>
     </ul>
   </div>
 </section>
@@ -126,15 +129,12 @@ Windows WLAN / event log APIs
   <div class="wrap">
     <div class="big">RADIOCHRON</div>
     <div class="cols">
-      <a href="https://github.com/sergii-ziborov/radiochron-electron">github.com/sergii-ziborov/radiochron-electron</a>
-      <a href="/electron">desktop app</a>
+      <a href="https://github.com/sergii-ziborov/radiochron-electron">radiochron-electron</a>
+      <a href="https://github.com/sergii-ziborov/radiochron-js">radiochron-js</a>
       <a href="/license">MIT / Apache-2.0</a>
       <a href="/privacy">privacy</a>
     </div>
-    <div class="note">No telemetry. No cookies. No analytics. Nothing leaves your machine — the
-      diagnostics run where the radio is, and stay there.<br><br>
-      © 2026 Sergii Ziborov. This site is static, weighs about as much as one stock-photo, and
-      renders without JavaScript.</div>
+    <div class="note">No telemetry. No cookies. No analytics. Diagnostics run where the radio is and stay there.<br><br>© 2026 Sergii Ziborov.</div>
   </div>
 </footer>
 
