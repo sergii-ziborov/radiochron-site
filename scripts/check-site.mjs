@@ -50,6 +50,7 @@ const index = await readFile(path.join(publicDir, "index.html"), "utf8");
 for (const repository of [
   "radiochron",
   "radiochron-agent",
+  "radiochron-fleet",
   "radiochron-mcp",
   "radiochron-js",
   "radiochron-site",

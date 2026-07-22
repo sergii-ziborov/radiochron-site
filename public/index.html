@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>RadioChron — the chronicle of your radio. Rust Wi-Fi diagnostics library + MCP server</title>
-<meta name="description" content="RadioChron records what the radio did — associations, roams, drops, reason codes — and returns verdicts, not data dumps. Pure Rust, 3 dependencies, ~1.0 MB, builds on bare rustup. Library, MCP server, and a desktop app.">
+<meta name="description" content="RadioChron records what Wi-Fi did and diagnoses the full path from radio to Internet. Native Windows, Linux/nl80211 and macOS/CoreWLAN collectors, fleet agent, control plane and MCP server.">
 <meta name="keywords" content="wifi diagnostics, rust wifi library, MCP server, model context protocol, wlan event log, reconnect loop, IoT wifi monitoring, 802.11 analysis, embedded rust, wifi verdict">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://radiochron.com/">
@@ -27,14 +27,15 @@
   "@type": "SoftwareApplication",
   "name": "RadioChron",
   "applicationCategory": "DeveloperApplication",
-  "operatingSystem": "Windows",
-  "description": "Pure-Rust Wi-Fi diagnostics library and MCP server: connection-history verdicts, a change-only chronicle recorder, and native WLAN collectors with three dependencies.",
+  "operatingSystem": "Windows, Linux, macOS",
+  "description": "Pure-Rust Wi-Fi diagnostics library, fleet agent and MCP server with native WLAN API, nl80211 and CoreWLAN collectors.",
   "url": "https://radiochron.com",
   "license": ["https://opensource.org/licenses/MIT", "https://www.apache.org/licenses/LICENSE-2.0"],
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "author": { "@type": "Person", "name": "Sergii Ziborov", "url": "https://github.com/sergii-ziborov" },
   "sameAs": [
     "https://github.com/sergii-ziborov/radiochron",
+    "https://github.com/sergii-ziborov/radiochron-fleet",
     "https://github.com/sergii-ziborov/radiochron-mcp",
     "https://github.com/sergii-ziborov/radiochron-js",
     "https://github.com/sergii-ziborov/radiochron-site"
@@ -171,7 +172,7 @@ rec.run_for(Duration::from_secs(3600))?;   <span class="c">// or own the loop: r
     </div>
     <div class="grid g3">
       <div class="card cut"><h3>Change detector</h3><div class="m">Pure state machine, no OS calls.
-        Roam ≠ drop-and-return; hysteresis absorbs driver noise. The same recorder runs on Windows and Linux.</div></div>
+        Roam ≠ drop-and-return; hysteresis absorbs driver noise. The same recorder runs on Windows, Linux and macOS.</div></div>
       <div class="card cut"><h3>Sink trait</h3><div class="m">NLog-style pluggable targets. JSONL ships;
         your database is your 30 lines. The core never grows a storage dependency.</div></div>
       <div class="card cut"><h3>Survives restarts</h3><div class="m">Appends, never truncates. Power loss
@@ -204,38 +205,42 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
 <span class="c"># status · scan · analyze · sample · history · record · connectivity</span></pre>
     </div>
     <div class="grid g2" style="margin-top:28px">
-      <div class="card cut"><h3>radiochron-agent</h3><div class="m">A foreground daemon for
-        systemd: atomic offline spool first, then MQTT QoS&nbsp;1 and/or OTLP/HTTP delivery.
-        Prometheus exposes fleet counters and current connectivity stages.
+      <div class="card cut"><h3>radiochron-agent</h3><div class="m">A small systemd/launchd/service daemon:
+        owner-only atomic offline spool first, then MQTT/mQTTS QoS&nbsp;1 and/or OTLP HTTP/HTTPS.
+        Prometheus exposes fleet counters and current connectivity stages; signed OTA retains a rollback binary.
         <a href="https://github.com/sergii-ziborov/radiochron-agent">Source</a>.</div></div>
       <div class="card cut"><h3>Beyond association</h3><div class="m">Radio, AP authentication,
-        usable IP configuration, DNS, service TCP and an explicit Internet endpoint are separate
-        stages. No public probe is contacted unless the operator configures it.</div></div>
+        DHCP versus static IP, gateway, DNS, service TCP, captive portal, certificate validity,
+        packet loss/jitter and Internet are separate stages. No public probe is contacted unless configured.</div></div>
     </div>
   </div>
 </section>
 
 <section class="band" id="surfaces">
   <div class="wrap">
-    <div class="tag">//: 04 — FIVE WAYS IN</div>
-    <h2>One engine, five surfaces</h2>
+    <div class="tag">//: 04 — SIX WAYS IN</div>
+    <h2>One engine, six surfaces</h2>
     <div class="grid g2">
       <div class="card cut"><h3>Rust library</h3>
         <div class="m"><code>radiochron</code> — collectors, 802.11 analysis, the chronicle.
         What an IoT agent, exporter or CLI embeds. MIT/Apache-2.0, three dependencies.
         <a href="https://github.com/sergii-ziborov/radiochron">Source</a>.</div></div>
       <div class="card cut"><h3>MCP server</h3>
-        <div class="m"><code>radiochron-mcp</code> — eleven typed tools + five resources over stdio.
-        Point Claude, Codex or any MCP client at one binary. No config, no arguments.
+        <div class="m"><code>radiochron-mcp</code> — ten portable typed tools + five resources over stdio;
+        Windows adds WLAN AutoConfig history. Point Claude, Codex or any MCP client at one binary.
         <a href="https://github.com/sergii-ziborov/radiochron-mcp">Source</a>.</div></div>
       <div class="card cut"><h3>npm launcher <span style="color:var(--cyan);font-size:.7rem">PUBLISH PENDING</span></h3>
         <div class="m">The <a href="https://github.com/sergii-ziborov/radiochron-js">standalone package</a>
-        carries a prebuilt MCP binary with version/commit provenance checks. Direct Node.js
-        bindings via napi-rs remain planned.</div></div>
+        carries provenance-checked binaries for Windows x64, Linux x64, Intel Mac and Apple Silicon.
+        Direct Node.js bindings via napi-rs remain planned.</div></div>
       <div class="card cut"><h3>Fleet agent <span style="color:var(--cyan);font-size:.7rem">UNRELEASED</span></h3>
         <div class="m"><a href="https://github.com/sergii-ziborov/radiochron-agent">radiochron-agent</a>
-        — Linux/Windows collector service with at-least-once offline delivery, MQTT, OTLP and
+        — Linux/Windows/macOS collector service with at-least-once offline delivery, MQTT, OTLP and
         Prometheus. Source is available; packages and service images are not released yet.</div></div>
+      <div class="card cut"><h3>Fleet control plane <span style="color:var(--cyan);font-size:.7rem">UNRELEASED</span></h3>
+        <div class="m"><a href="https://github.com/sergii-ziborov/radiochron-fleet">radiochron-fleet</a>
+        — enrollment, Ed25519-signed profiles, fleet uptime, alarms, deterministic OTA rollout and rollback policy.
+        It upgrades independently and is not a core dependency.</div></div>
       <div class="card cut"><h3>Desktop app</h3>
         <div class="m"><a href="/electron">RadioChron Desktop</a> —
         evidence timelines, baseline runs and network inventory on the same engine.
@@ -282,9 +287,10 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
         anything an AI agent / fleet backend can call. That's the territory RadioChron holds.</li>
       <li>RSSI on most Windows drivers is reconstructed from a 0–100 quality scale — ±2&nbsp;dB is
         quantisation, not signal. Our findings state this about themselves.</li>
-      <li>The MCP binary stays Windows-specific because WLAN AutoConfig history is Windows data.
-        The core collector and fleet agent now run on Linux through nl80211. Linux has no equivalent
-        historical event log, so the durable chronicle is its source of history.</li>
+      <li>The MCP binary is portable, but WLAN AutoConfig history remains Windows data. Linux and
+        macOS use the durable chronicle instead. Recent macOS releases gate SSID/BSSID and scan
+        identity behind Location Services; a headless LaunchDaemon cannot receive that permission,
+        so full Apple radio evidence uses the supplied per-user LaunchAgent.</li>
     </ul>
   </div>
 </section>
@@ -294,12 +300,12 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
     <div class="tag">//: 07 — ROADMAP</div>
     <h2>Where this goes</h2>
     <ul class="h road">
-      <li class="done"><b>SHIPPED</b>Native Windows WLAN and Linux/nl80211 collectors, WPA2/WPA3/OWE analysis, event-log verdicts and a generic versioned chronicle — 91 core/MCP/agent tests</li>
-      <li class="done"><b>SHIPPED</b>Unreleased fleet-agent source: offline spool, systemd unit, MQTT QoS&nbsp;1, OTLP/HTTP, Prometheus and radio-to-Internet staged diagnosis</li>
+      <li class="done"><b>SHIPPED IN SOURCE</b>Native Windows WLAN, Linux/nl80211 and macOS/CoreWLAN collectors, portable MCP and a versioned fleet-safe chronicle</li>
+      <li class="done"><b>SHIPPED IN SOURCE</b>Offline agent with systemd/launchd, MQTT TLS/mTLS, OTLP/HTTPS, Prometheus and radio-to-Internet staged diagnosis</li>
+      <li class="done"><b>SHIPPED IN SOURCE</b>Fleet enrollment, signed revisioned profiles, alarms, connectivity uptime, deterministic signed OTA rollout and rollback</li>
       <li class="plan"><b>PLANNED</b>Cellular collectors — RSRP/RSRQ/SINR via Windows MBN and Linux ModemManager; for a field device the radio that matters may not be Wi-Fi</li>
-      <li class="plan"><b>PLANNED</b>Fleet behavior profiles, alert rules, signed OTA packaging and HTTPS/mQTTS without a local sidecar</li>
       <li class="plan"><b>PLANNED</b>Direct Node.js bindings via napi-rs; crates.io/npm/agent package publish</li>
-      <li class="plan"><b>PLANNED</b>macOS via CoreWLAN — honestly less: the public API hides BSSIDs behind location permission and exposes no raw IEs</li>
+      <li class="plan"><b>PLANNED</b>Developer ID signing/notarization and managed TCC deployment for production Apple fleets</li>
     </ul>
   </div>
 </section>
