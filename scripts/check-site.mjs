@@ -47,7 +47,13 @@ for (const file of htmlFiles) {
 }
 
 const index = await readFile(path.join(publicDir, "index.html"), "utf8");
-for (const repository of ["radiochron", "radiochron-mcp", "radiochron-js", "radiochron-site"]) {
+for (const repository of [
+  "radiochron",
+  "radiochron-agent",
+  "radiochron-mcp",
+  "radiochron-js",
+  "radiochron-site",
+]) {
   const url = `https://github.com/sergii-ziborov/${repository}`;
   if (!index.includes(url)) throw new Error(`index.html is missing repository link: ${url}`);
 }

@@ -90,7 +90,7 @@
   <div class="wrap">
     <div class="tag">//: RADIO DIAGNOSTICS FOR MACHINES THAT CAN'T EXPLAIN THEMSELVES</div>
     <h1>The chronicle<br>of your radio<span class="blink">_</span></h1>
-    <p class="sub"><strong>RadioChron</strong> is a pure-Rust Wi-Fi diagnostics library and MCP server.
+    <p class="sub"><strong>RadioChron</strong> is a pure-Rust Wi-Fi diagnostics engine, fleet agent and MCP server.
       It records what the radio actually did — associations, roams, drops, reason codes —
       and returns <strong>verdicts, not data dumps</strong>. A snapshot says “−58 dBm, fine”.
       The chronicle says why it wasn't fine ten minutes ago.</p>
@@ -158,7 +158,7 @@
     <p>A stable link polled every 2 seconds is 43,200 identical log lines a day. The chronicle
       writes <strong>one</strong> <code>associated</code> line and goes quiet until something
       changes: a roam, a drop, a signal shift beyond dB-hysteresis, a reason code in the event
-      log. Storage is append-only JSONL with built-in rotation — greppable, schema-free, and a
+      log. Storage is versioned append-only JSONL with built-in rotation — greppable, fleet-safe, and a
       hard disk ceiling of ~4&nbsp;MiB by default, sized for embedded flash, not workstations.</p>
     <div class="term cut">
       <div class="bar"><i></i><i></i><i></i></div>
@@ -171,7 +171,7 @@ rec.run_for(Duration::from_secs(3600))?;   <span class="c">// or own the loop: r
     </div>
     <div class="grid g3">
       <div class="card cut"><h3>Change detector</h3><div class="m">Pure state machine, no OS calls.
-        Roam ≠ drop-and-return; hysteresis absorbs driver noise. Ports to Linux and cellular unchanged.</div></div>
+        Roam ≠ drop-and-return; hysteresis absorbs driver noise. The same recorder runs on Windows and Linux.</div></div>
       <div class="card cut"><h3>Sink trait</h3><div class="m">NLog-style pluggable targets. JSONL ships;
         your database is your 30 lines. The core never grows a storage dependency.</div></div>
       <div class="card cut"><h3>Survives restarts</h3><div class="m">Appends, never truncates. Power loss
@@ -191,7 +191,8 @@ rec.run_for(Duration::from_secs(3600))?;   <span class="c">// or own the loop: r
       difference between adding a dependency and rebuilding the OS.</p>
     <p style="margin-top:12px">RadioChron hand-writes its FFI and resolves system libraries at
       runtime. No binding crates, no import libraries, no C. A device that only needs association
-      state compiles <em>just that</em>: features are granular by capability.</p>
+      state compiles <em>just that</em>: features are granular by capability. Linux talks to nl80211
+      over Generic Netlink directly — no <code>iw</code> parsing.</p>
     <div class="bars">
       <div class="row"><span>RADIOCHRON</span><div class="bar" style="width:25%"><b>13 crates</b></div></div>
       <div class="row"><span>NEAREST EQUIVALENT</span><div class="bar dim" style="width:100%"><b>51 crates + C toolchain</b></div></div>
@@ -200,28 +201,41 @@ rec.run_for(Duration::from_secs(3600))?;   <span class="c">// or own the loop: r
       <div class="bar"><i></i><i></i><i></i></div>
 <pre><span class="c"># a sensor that only reports link state pulls exactly that:</span>
 radiochron = { git = "…", default-features = false, features = ["status"] }
-<span class="c"># status · scan · analyze · sample · history · record</span></pre>
+<span class="c"># status · scan · analyze · sample · history · record · connectivity</span></pre>
+    </div>
+    <div class="grid g2" style="margin-top:28px">
+      <div class="card cut"><h3>radiochron-agent</h3><div class="m">A foreground daemon for
+        systemd: atomic offline spool first, then MQTT QoS&nbsp;1 and/or OTLP/HTTP delivery.
+        Prometheus exposes fleet counters and current connectivity stages.
+        <a href="https://github.com/sergii-ziborov/radiochron-agent">Source</a>.</div></div>
+      <div class="card cut"><h3>Beyond association</h3><div class="m">Radio, AP authentication,
+        usable IP configuration, DNS, service TCP and an explicit Internet endpoint are separate
+        stages. No public probe is contacted unless the operator configures it.</div></div>
     </div>
   </div>
 </section>
 
 <section class="band" id="surfaces">
   <div class="wrap">
-    <div class="tag">//: 04 — FOUR WAYS IN</div>
-    <h2>One engine, four surfaces</h2>
+    <div class="tag">//: 04 — FIVE WAYS IN</div>
+    <h2>One engine, five surfaces</h2>
     <div class="grid g2">
       <div class="card cut"><h3>Rust library</h3>
         <div class="m"><code>radiochron</code> — collectors, 802.11 analysis, the chronicle.
         What an IoT agent, exporter or CLI embeds. MIT/Apache-2.0, three dependencies.
         <a href="https://github.com/sergii-ziborov/radiochron">Source</a>.</div></div>
       <div class="card cut"><h3>MCP server</h3>
-        <div class="m"><code>radiochron-mcp</code> — ten typed tools + five resources over stdio.
+        <div class="m"><code>radiochron-mcp</code> — eleven typed tools + five resources over stdio.
         Point Claude, Codex or any MCP client at one binary. No config, no arguments.
         <a href="https://github.com/sergii-ziborov/radiochron-mcp">Source</a>.</div></div>
       <div class="card cut"><h3>npm launcher <span style="color:var(--cyan);font-size:.7rem">PUBLISH PENDING</span></h3>
         <div class="m">The <a href="https://github.com/sergii-ziborov/radiochron-js">standalone package</a>
         carries a prebuilt MCP binary with version/commit provenance checks. Direct Node.js
         bindings via napi-rs remain planned.</div></div>
+      <div class="card cut"><h3>Fleet agent <span style="color:var(--cyan);font-size:.7rem">UNRELEASED</span></h3>
+        <div class="m"><a href="https://github.com/sergii-ziborov/radiochron-agent">radiochron-agent</a>
+        — Linux/Windows collector service with at-least-once offline delivery, MQTT, OTLP and
+        Prometheus. Source is available; packages and service images are not released yet.</div></div>
       <div class="card cut"><h3>Desktop app</h3>
         <div class="m"><a href="/electron">RadioChron Desktop</a> —
         evidence timelines, baseline runs and network inventory on the same engine.
@@ -233,7 +247,7 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
 <section class="band k" id="tools">
   <div class="wrap">
     <div class="tag">//: 05 — MCP SURFACE</div>
-    <h2>Ten typed tools, honest about effects</h2>
+    <h2>Eleven typed tools, honest about effects</h2>
     <table>
       <tr><th>tool</th><th>answers</th></tr>
       <tr><td><code>wifi_history</code></td><td>“why did it drop earlier” — reconnect loops, an AP failing key exchange, credential mismatch <span class="m">// the headline</span></td></tr>
@@ -242,6 +256,7 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
       <tr><td><code>wifi_status</code></td><td>the association right now: SSID, BSSID, PHY, rates, RSSI</td></tr>
       <tr><td><code>wifi_networks</code></td><td>nearby BSS with band, channel, dBm and security flags; summary by default</td></tr>
       <tr><td><code>wifi_scan</code></td><td>ask the driver for a fresh scan</td></tr>
+      <tr><td><code>connectivity_diagnose</code></td><td>separate radio, authentication, IP/DHCP, DNS, TCP and explicitly configured Internet reachability</td></tr>
       <tr><td><code>chronicle_start</code></td><td>start the rotating local change-only recorder</td></tr>
       <tr><td><code>chronicle_stop</code></td><td>stop and flush the recorder</td></tr>
       <tr><td><code>chronicle_status</code></td><td>recorder state, path and latest error</td></tr>
@@ -267,9 +282,9 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
         anything an AI agent / fleet backend can call. That's the territory RadioChron holds.</li>
       <li>RSSI on most Windows drivers is reconstructed from a 0–100 quality scale — ±2&nbsp;dB is
         quantisation, not signal. Our findings state this about themselves.</li>
-      <li>Windows-only today. That's where the pain is sharpest — <code>netsh</code> gives the
-        least of any platform — and where we started. Linux gives <em>more</em> data via nl80211
-        and is next.</li>
+      <li>The MCP binary stays Windows-specific because WLAN AutoConfig history is Windows data.
+        The core collector and fleet agent now run on Linux through nl80211. Linux has no equivalent
+        historical event log, so the durable chronicle is its source of history.</li>
     </ul>
   </div>
 </section>
@@ -279,10 +294,11 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
     <div class="tag">//: 07 — ROADMAP</div>
     <h2>Where this goes</h2>
     <ul class="h road">
-      <li class="done"><b>SHIPPED</b>Native WLAN collectors, WPA2/WPA3/OWE analysis, event-log verdicts, MCP-controlled chronicle, structured/cancelable MCP — verified on real hardware, 79 tests</li>
+      <li class="done"><b>SHIPPED</b>Native Windows WLAN and Linux/nl80211 collectors, WPA2/WPA3/OWE analysis, event-log verdicts and a generic versioned chronicle — 91 core/MCP/agent tests</li>
+      <li class="done"><b>SHIPPED</b>Unreleased fleet-agent source: offline spool, systemd unit, MQTT QoS&nbsp;1, OTLP/HTTP, Prometheus and radio-to-Internet staged diagnosis</li>
       <li class="plan"><b>PLANNED</b>Cellular collectors — RSRP/RSRQ/SINR via Windows MBN and Linux ModemManager; for a field device the radio that matters may not be Wi-Fi</li>
-      <li class="plan"><b>PLANNED</b>Linux via nl80211 — raw IEs straight from the kernel, richer than Windows</li>
-      <li class="plan"><b>PLANNED</b>Direct Node.js bindings via napi-rs; crates.io/npm publish</li>
+      <li class="plan"><b>PLANNED</b>Fleet behavior profiles, alert rules, signed OTA packaging and HTTPS/mQTTS without a local sidecar</li>
+      <li class="plan"><b>PLANNED</b>Direct Node.js bindings via napi-rs; crates.io/npm/agent package publish</li>
       <li class="plan"><b>PLANNED</b>macOS via CoreWLAN — honestly less: the public API hides BSSIDs behind location permission and exposes no raw IEs</li>
     </ul>
   </div>
