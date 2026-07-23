@@ -66,6 +66,19 @@ for (const repository of [
 
 
 const electron = await readFile(path.join(publicDir, "electron.html"), "utf8");
+const assignedNumbers = JSON.parse(
+  await readFile(path.join(publicDir, "data", "bluetooth-assigned-numbers.json"), "utf8")
+);
+if (
+  assignedNumbers.schema_version !== 1
+  || assignedNumbers.metadata?.counts?.companies < 3990
+  || assignedNumbers.metadata?.counts?.services < 120
+  || assignedNumbers.metadata?.counts?.appearances < 100
+  || assignedNumbers.companies?.["76"] !== "Apple, Inc."
+  || assignedNumbers.appearances?.["962"] !== "Mouse"
+) {
+  throw new Error("Bluetooth assigned-numbers snapshot is missing or incomplete");
+}
 for (const asset of [
   "RadioChron-Desktop-0.2.0-Windows-x64.exe",
   "RadioChron-Desktop-0.2.0-macOS-Apple-Silicon.dmg",
@@ -74,7 +87,19 @@ for (const asset of [
   if (!electron.includes(asset)) throw new Error(`electron.html is missing download: ${asset}`);
 }
 
-for (const screenshot of ["overview", "map", "network", "bluetooth", "channels"]) {
+for (const screenshot of [
+  "overview",
+  "map",
+  "analytics",
+  "wifi-presence",
+  "network",
+  "bluetooth-map",
+  "bluetooth-sensor-detail",
+  "bluetooth-devices",
+  "bluetooth-analytics",
+  "bluetooth-presence",
+  "channels",
+]) {
   const path = `/screenshots/radiochron-desktop-${screenshot}.png`;
   if (!index.includes(path) || !electron.includes(path)) {
     throw new Error(`desktop screenshot is not shown on both product pages: ${path}`);

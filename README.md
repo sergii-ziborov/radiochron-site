@@ -4,6 +4,16 @@ Source for [radiochron.com](https://radiochron.com), a static website deployed w
 
 The deployable files live in `public/`. The site uses no client-side JavaScript, analytics, cookies, or telemetry.
 
+The Desktop page includes Electron-captured synthetic screenshots for the
+shared Wi-Fi/Bluetooth map, typed Bluetooth relationships, and filterable
+1/7/30-day presence analytics. No real SSID, address, or device identity is
+used in those images.
+
+`public/data/bluetooth-assigned-numbers.json` is the downloadable, versioned
+company/service/appearance snapshot bundled with RadioChron Desktop. Its source
+revision and BSD-3-Clause attribution are embedded in the file and repeated in
+`public/data/NOTICE.txt`.
+
 ## Repository family
 
 - [`radiochron`](https://github.com/sergii-ziborov/radiochron) — IoT-focused Rust Wi-Fi/BLE library
