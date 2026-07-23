@@ -6,10 +6,10 @@ The deployable files live in `public/`. The site uses no client-side JavaScript,
 
 ## Repository family
 
-- [`radiochron`](https://github.com/sergii-ziborov/radiochron) — IoT-focused Rust library
+- [`radiochron`](https://github.com/sergii-ziborov/radiochron) — IoT-focused Rust Wi-Fi/BLE library
 - [`radiochron-mcp`](https://github.com/sergii-ziborov/radiochron-mcp) — MCP server
 - [`radiochron-js`](https://github.com/sergii-ziborov/radiochron-js) — standalone Node/npm library over the Rust core
-- [`radiochron-electron`](https://github.com/sergii-ziborov/radiochron-electron) — separate Windows/macOS desktop application using `radiochron-js`
+- [`radiochron-electron`](https://github.com/sergii-ziborov/radiochron-electron) — separate Windows/macOS Wi-Fi/BLE desktop application using `radiochron-js`
 
 ## Verify and run
 

@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RadioChron — Rust Wi-Fi diagnostics for IoT, Node, MCP and Desktop</title>
-<meta name="description" content="RadioChron records what Wi-Fi did and diagnoses the full path from radio to Internet: a Rust core, Node library, MCP server and desktop app for Windows and macOS.">
-<meta name="keywords" content="wifi diagnostics, rust wifi library, MCP server, model context protocol, wlan event log, reconnect loop, IoT wifi monitoring, 802.11 analysis, embedded rust, wifi verdict">
+<title>RadioChron — Rust Wi-Fi and BLE diagnostics for IoT, Node, MCP and Desktop</title>
+<meta name="description" content="RadioChron records Wi-Fi and BLE history, diagnoses the path from radio to Internet, and ships as a Rust core, Node library, MCP server and desktop app.">
+<meta name="keywords" content="wifi diagnostics, bluetooth history, BLE beacon tracking, rust wifi library, MCP server, IoT monitoring, 802.11 analysis, embedded rust">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://radiochron.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="RadioChron">
 <meta property="og:title" content="RadioChron — the chronicle of your radio">
-<meta property="og:description" content="Pure-Rust Wi-Fi diagnostics that answers 'why did it drop': verdicts from connection history, a change-only recorder, and an MCP server. 3 dependencies, ~1.0 MB.">
+<meta property="og:description" content="Pure-Rust Wi-Fi diagnostics and portable BLE history: radio-to-Internet verdicts, a change-only recorder, Node, MCP and Desktop surfaces.">
 <meta property="og:url" content="https://radiochron.com/">
 <meta property="og:image" content="https://radiochron.com/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="RadioChron — the chronicle of your radio">
-<meta name="twitter:description" content="Rust Wi-Fi diagnostics: verdicts from history, not data dumps. 3 deps, ~1.0 MB, MIT/Apache-2.0.">
+<meta name="twitter:description" content="Rust Wi-Fi diagnostics and BLE identity history: evidence from history, not data dumps. MIT/Apache-2.0.">
 <meta name="twitter:image" content="https://radiochron.com/og.png">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <script type="application/ld+json">
@@ -28,7 +28,7 @@
   "name": "RadioChron",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Windows, Linux, macOS",
-  "description": "Wi-Fi diagnostics with a pure-Rust core, Node library, MCP server and Windows/macOS desktop app.",
+  "description": "Wi-Fi diagnostics and BLE identity history with a Rust core, Node library, MCP server and Windows/macOS desktop app.",
   "url": "https://radiochron.com",
   "license": "https://radiochron.com/license",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
@@ -49,7 +49,7 @@
 <header>
   <div class="mark">
     <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect width="26" height="26" fill="#0D0D08"/><path d="M3 17 L7 17 9 8 12 21 15 12 17 17 23 17" fill="none" stroke="#FCEE0A" stroke-width="2.2"/></svg>
-    RADIOCHRON <span class="v">v0.2</span>
+    RADIOCHRON <span class="v">v0.4</span>
   </div>
   <nav>
     <a href="#verdict">verdict</a>
@@ -91,8 +91,8 @@
   <div class="wrap">
     <div class="tag">//: RADIO DIAGNOSTICS FOR MACHINES THAT CAN'T EXPLAIN THEMSELVES</div>
     <h1>The chronicle<br>of your radio<span class="blink">_</span></h1>
-    <p class="sub"><strong>RadioChron</strong> is a pure-Rust Wi-Fi diagnostics engine with Node,
-      MCP and desktop surfaces.
+    <p class="sub"><strong>RadioChron</strong> is a Rust Wi-Fi diagnostics and BLE history engine
+      with Node, MCP and desktop surfaces.
       It records what the radio actually did — associations, roams, drops, reason codes —
       and returns <strong>verdicts, not data dumps</strong>. A snapshot says “−58 dBm, fine”.
       The chronicle says why it wasn't fine ten minutes ago.</p>
@@ -201,8 +201,11 @@ rec.run_for(Duration::from_secs(3600))?;   <span class="c">// or own the loop: r
     <div class="term cut">
       <div class="bar"><i></i><i></i><i></i></div>
 <pre><span class="c"># a sensor that only reports link state pulls exactly that:</span>
-radiochron = { git = "…", default-features = false, features = ["status"] }
-<span class="c"># status · scan · analyze · sample · history · record · connectivity</span></pre>
+radiochron = { version = "0.4", default-features = false, features = ["status"] }
+<span class="c"># portable no_std BLE history; ESP-IDF can add the real NimBLE collector:</span>
+radiochron = { version = "0.4", default-features = false, features = ["embedded", "ble"] }
+radiochron-esp-idf = { version = "0.2", features = ["nimble"] }
+<span class="c"># status · scan · analyze · sample · history · record · connectivity · ble</span></pre>
     </div>
     <div class="grid g2" style="margin-top:28px">
       <div class="card cut"><h3>Native on all three OS families</h3><div class="m">Windows Native WLAN,
@@ -220,22 +223,25 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
     <h2>One engine, four focused surfaces</h2>
     <div class="grid g2">
       <div class="card cut"><h3>Rust library</h3>
-        <div class="m"><code>radiochron</code> — collectors, 802.11 analysis, the chronicle.
-        What an IoT agent, exporter or CLI embeds. MIT/Apache-2.0, three dependencies.
+        <div class="m"><code>radiochron</code> — collectors, 802.11 analysis, BLE identity/history
+        detectors and the chronicle. What an IoT agent, ESP-IDF adapter, exporter or CLI embeds.
+        The BLE model remains <code>no_std + alloc</code>. MIT/Apache-2.0.
         <a href="https://github.com/sergii-ziborov/radiochron">Source</a>.</div></div>
       <div class="card cut"><h3>MCP server</h3>
-        <div class="m"><code>radiochron-mcp</code> — ten portable typed tools + five resources over stdio;
-        Windows adds WLAN AutoConfig history. Point Claude, Codex or any MCP client at one binary.
-        MIT licensed. <a href="https://github.com/sergii-ziborov/radiochron-mcp">Source</a>.</div></div>
+        <div class="m"><code>radiochron-mcp</code> — fifteen portable typed tools + six resources
+        over stdio; Windows adds WLAN AutoConfig history. BLE tools analyze caller-supplied
+        observations and never start a Bluetooth scan. MIT licensed.
+        <a href="https://github.com/sergii-ziborov/radiochron-mcp">Source</a>.</div></div>
       <div class="card cut"><h3>Node/npm library</h3>
         <div class="m">The <a href="https://github.com/sergii-ziborov/radiochron-js">standalone package</a>
-        is the application API over the Rust core for Windows x64, Linux x64, Intel Mac and Apple
-        Silicon. It packages a revision-checked native Node adapter, is independent of the MCP server,
-        and is MIT licensed. <a href="https://www.npmjs.com/package/radiochron">Install from npm</a>.</div></div>
+        is the application API over the Rust core for Windows x64, Linux x64/ARM64, Intel Mac and
+        Apple Silicon. It adds native WinRT, BlueZ and CoreBluetooth scanning, packages a
+        revision-checked native Node adapter, and is independent of MCP.
+        <a href="https://www.npmjs.com/package/radiochron">Install from npm</a>.</div></div>
       <div class="card cut"><h3>Desktop app</h3>
         <div class="m"><a href="/electron">RadioChron Desktop</a> —
-        Windows/macOS baselines, relative RF map, channel pressure and network inventory. It imports
-        <code>radiochron-js</code>; builds cover Windows x64, Intel Mac and Apple Silicon.
+        Windows/macOS baselines, relative RF map, channel pressure, BLE history and network
+        inventory. It imports <code>radiochron-js</code>; builds cover Windows x64, Intel Mac and Apple Silicon.
         <a href="/electron#download">Downloads and details</a>.</div></div>
     </div>
   </div>
@@ -247,8 +253,8 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
     <div class="desktop-lead">
       <div>
         <h2>The radio evidence, on screen</h2>
-        <p>Capture a baseline, compare observations, inspect nearby radios, map relative signal,
-          explain channel pressure and export support-ready evidence without sending telemetry anywhere.</p>
+        <p>Capture a baseline, compare observations, inspect Wi-Fi and BLE radios, map relative
+          Wi-Fi signal, and export support-ready evidence without sending telemetry anywhere.</p>
         <div class="actions">
           <a class="button primary" href="/electron#download">Download desktop beta</a>
           <a class="button" href="/electron">Desktop details</a>
@@ -259,16 +265,17 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
     <div class="shot-grid compact">
       <figure><img src="/screenshots/radiochron-desktop-map.png" alt="RadioChron Desktop relative RF map with synthetic access points" loading="lazy"><figcaption>Relative RF map</figcaption></figure>
       <figure><img src="/screenshots/radiochron-desktop-network.png" alt="RadioChron Desktop network controls with documentation-only addresses" loading="lazy"><figcaption>Network evidence</figcaption></figure>
+      <figure><img src="/screenshots/radiochron-desktop-bluetooth.png" alt="RadioChron Desktop Bluetooth history with synthetic beacons" loading="lazy"><figcaption>BLE history</figcaption></figure>
       <figure><img src="/screenshots/radiochron-desktop-channels.png" alt="RadioChron Desktop channel pressure view with synthetic access points" loading="lazy"><figcaption>Channel pressure</figcaption></figure>
     </div>
-    <p class="screen-note">All screenshots use invented SSIDs, locally administered MAC addresses and documentation-only IP ranges.</p>
+    <p class="screen-note">All screenshots use invented SSIDs and beacons, locally administered MAC addresses and documentation-only IP ranges.</p>
   </div>
 </section>
 
 <section class="band k" id="tools">
   <div class="wrap">
     <div class="tag">//: 05 — MCP SURFACE</div>
-    <h2>Eleven typed tools, honest about effects</h2>
+    <h2>Fifteen portable typed tools, honest about effects</h2>
     <table>
       <tr><th>tool</th><th>answers</th></tr>
       <tr><td><code>wifi_history</code></td><td>“why did it drop earlier” — reconnect loops, an AP failing key exchange, credential mismatch <span class="m">// the headline</span></td></tr>
@@ -282,6 +289,9 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
       <tr><td><code>chronicle_stop</code></td><td>stop and flush the recorder</td></tr>
       <tr><td><code>chronicle_status</code></td><td>recorder state, path and latest error</td></tr>
       <tr><td><code>chronicle_recent</code></td><td>recent changes across active and rotated JSONL files</td></tr>
+      <tr><td><code>ble_identify / ble_observe</code></td><td>opaque identity, history and caveated persistence, co-travel, clone or flood evidence from caller-supplied observations</td></tr>
+      <tr><td><code>ble_histories / ble_evaluate</code></td><td>process-local recurrence and explicit disappearance evaluation; no radio scan is started by MCP</td></tr>
+      <tr><td><code>ble_tracker_reset</code></td><td>clear local BLE history and apply allowlist, expected-device and detector policy</td></tr>
     </table>
     <p style="margin-top:18px" class="m">Deliberately absent: saved Wi-Fi keys, MAC changes, adapter
       restarts, LAN sweeps. An autonomous model must not be able to leak a credential or drop you
@@ -318,6 +328,7 @@ radiochron = { git = "…", default-features = false, features = ["status"] }
     <ul class="h road">
       <li class="done"><b>SHIPPED</b>Native Windows WLAN, Linux/nl80211 and macOS/CoreWLAN collectors, portable MCP and a versioned multi-device chronicle</li>
       <li class="done"><b>SHIPPED</b>Radio-to-Internet staged diagnosis across radio, authentication, IP, gateway, DNS and TCP</li>
+      <li class="done"><b>SHIPPED</b>Portable <code>no_std + alloc</code> BLE identity/history detectors, ESP-IDF/NimBLE adapter, and native WinRT/BlueZ/CoreBluetooth scans through Node/Desktop</li>
       <li class="plan"><b>PLANNED</b>Cellular collectors — RSRP/RSRQ/SINR via Windows MBN and Linux ModemManager; for a field device the radio that matters may not be Wi-Fi</li>
       <li class="done"><b>SHIPPED</b>Standalone radiochron-js Node API and RadioChron Desktop beta builds for Windows, Intel Mac and Apple Silicon</li>
       <li class="done"><b>PUBLISHED</b>radiochron on crates.io plus radiochron and radiochron-mcp on npm</li>

@@ -67,14 +67,14 @@ for (const repository of [
 
 const electron = await readFile(path.join(publicDir, "electron.html"), "utf8");
 for (const asset of [
-  "RadioChron-Desktop-0.1.0-Windows-x64.exe",
-  "RadioChron-Desktop-0.1.0-macOS-Apple-Silicon.dmg",
-  "RadioChron-Desktop-0.1.0-macOS-Intel.dmg",
+  "RadioChron-Desktop-0.2.0-Windows-x64.exe",
+  "RadioChron-Desktop-0.2.0-macOS-Apple-Silicon.dmg",
+  "RadioChron-Desktop-0.2.0-macOS-Intel.dmg",
 ]) {
   if (!electron.includes(asset)) throw new Error(`electron.html is missing download: ${asset}`);
 }
 
-for (const screenshot of ["overview", "map", "network", "channels"]) {
+for (const screenshot of ["overview", "map", "network", "bluetooth", "channels"]) {
   const path = `/screenshots/radiochron-desktop-${screenshot}.png`;
   if (!index.includes(path) || !electron.includes(path)) {
     throw new Error(`desktop screenshot is not shown on both product pages: ${path}`);
