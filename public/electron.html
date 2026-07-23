@@ -64,8 +64,8 @@
       <figure><img src="/screenshots/radiochron-desktop-analytics.png" alt="RadioChron Desktop Wi-Fi evidence timeline, pulse watch and signal matrices"><figcaption>Wi-Fi Analytics — timeline, transition pulse watch and AP matrices</figcaption></figure>
       <figure><img src="/screenshots/radiochron-desktop-wifi-presence.png" alt="RadioChron Desktop Wi-Fi sampled presence patterns"><figcaption>Wi-Fi presence — filterable 1/7/30-day stability and recurrence evidence</figcaption></figure>
       <figure><img src="/screenshots/radiochron-desktop-network.png" alt="RadioChron Desktop network view with documentation-only addresses"><figcaption>Network — controlled local diagnostics and scan identity</figcaption></figure>
-      <figure><img src="/screenshots/radiochron-desktop-bluetooth-map.png" alt="RadioChron Desktop Bluetooth RF map with synthetic devices"><figcaption>Bluetooth RF map — shared pan, zoom, fullscreen, filters and typed links</figcaption></figure>
-      <figure><img src="/screenshots/radiochron-desktop-bluetooth-sensor-detail.png" alt="RadioChron Desktop local Bluetooth node with connected, paired and observed relationships"><figcaption>Local node — connected, paired and observed relationships stay distinct</figcaption></figure>
+      <figure><img src="/screenshots/radiochron-desktop-bluetooth-map.png" alt="RadioChron Desktop Bluetooth RF map with synthetic devices"><figcaption>Bluetooth RF map — shared pan, zoom, fullscreen, filters and confirmed local links</figcaption></figure>
+      <figure><img src="/screenshots/radiochron-desktop-bluetooth-sensor-detail.png" alt="RadioChron Desktop local Bluetooth node with connected and paired relationships"><figcaption>Local node — connected and paired links stay distinct from unlinked radio observations</figcaption></figure>
       <figure><img src="/screenshots/radiochron-desktop-bluetooth-devices.png" alt="RadioChron Desktop Bluetooth device inventory with a connected mock mouse"><figcaption>Bluetooth devices — radio evidence plus paired and connected OS inventory</figcaption></figure>
       <figure><img src="/screenshots/radiochron-desktop-bluetooth-analytics.png" alt="RadioChron Desktop Bluetooth evidence timeline and recurrence matrix"><figcaption>Bluetooth Analytics — RSSI gaps, recurrence, system inventory and detector pulses</figcaption></figure>
       <figure><img src="/screenshots/radiochron-desktop-bluetooth-presence.png" alt="RadioChron Desktop Bluetooth sampled presence patterns"><figcaption>Presence patterns — new, stable, weekday, recurring and dormant evidence over 1/7/30 days</figcaption></figure>
@@ -82,9 +82,9 @@
       <div class="card cut"><h3>Baseline runs</h3><div class="m">Capture a timed baseline of the connection and environment, retain it locally and compare runs.</div></div>
       <div class="card cut"><h3>Evidence timeline</h3><div class="m">Reconnect and environment observations become a support-ready chronology, not just a snapshot.</div></div>
       <div class="card cut"><h3>AP inventory</h3><div class="m">SSID/BSSID, dBm, band, channel, advertised security, BSS information elements and first/last seen history.</div></div>
-      <div class="card cut"><h3>Shared RF map engine</h3><div class="m">Wi-Fi and Bluetooth reuse one pannable, zoomable, fullscreen viewport with deterministic collision correction, search and retained-history filters. The clickable “You” node exposes connected, paired, observed and retained relationships without turning RSSI into distance.</div></div>
+      <div class="card cut"><h3>Shared RF map engine</h3><div class="m">Wi-Fi and Bluetooth reuse one pannable, zoomable, fullscreen viewport with deterministic collision correction, search and retained-history filters. The clickable “You” node draws only OS-reported connected and paired links; advertisements and retained evidence remain unlinked nodes.</div></div>
       <div class="card cut"><h3>Channel pressure</h3><div class="m">Explain crowded channels using live APs, signal mix, overlap and advertised BSS load.</div></div>
-      <div class="card cut"><h3>Bluetooth device inventory</h3><div class="m">Combine advertisements with paired/connected OS inventory by exact address, preserving real names and device categories without inventing RSSI. Company IDs, GATT services and GAP appearances resolve from a bundled versioned database; <a href="/data/bluetooth-assigned-numbers.json">download the snapshot</a> or read its <a href="/data/NOTICE.txt">license and provenance</a>.</div></div>
+      <div class="card cut"><h3>Bluetooth device inventory</h3><div class="m">Combine advertisements with paired/connected OS inventory by exact address, preserving real names and device categories without inventing RSSI. Windows active discovery runs only for the selected 2/4/8-second window; macOS and Linux use OS-managed discovery. Company IDs, GATT services and GAP appearances resolve from a bundled versioned database; <a href="/data/bluetooth-assigned-numbers.json">download the snapshot</a> or read its <a href="/data/NOTICE.txt">license and provenance</a>.</div></div>
       <div class="card cut"><h3>Evidence Analytics</h3><div class="m">Explore exact retained scans through selectable timelines, transition pulse watches, signal matrices and filterable 1/7/30-day presence patterns. Missing observations remain gaps.</div></div>
       <div class="card cut"><h3>Evidence-rich PDF</h3><div class="m">Export Wi-Fi and Bluetooth history with real scan charts, changes, distributions, presence patterns and explicit interpretation limits. Location/LAN reports include richer RF, vendor, security and review evidence.</div></div>
       <div class="card cut"><h3>BLE identity history</h3><div class="m">Track protocol and address evidence, recurrence and signal range; flag persistence, disappearance, clone or flood evidence with explicit limitations.</div></div>
@@ -122,16 +122,16 @@
   <div class="wrap">
     <div class="tag">//: 04 — DOWNLOAD BETA</div>
     <h2>Desktop installers</h2>
-    <p>Download the current open-source beta 2. These builds are produced from the tested repository
+    <p>Download the current open-source beta 3. These builds are produced from the tested repository
       commit and include the native <code>radiochron-js</code> adapter.</p>
     <div class="grid g3 download-grid">
-      <div class="card cut"><h3>Windows x64</h3><div class="m">Assisted NSIS installer (.exe)</div><div class="actions"><a class="button primary" href="https://github.com/sergii-ziborov/radiochron-electron/releases/download/desktop-v0.2.0-beta.2/RadioChron-Desktop-0.2.0-Windows-x64.exe">Download</a></div></div>
-      <div class="card cut"><h3>Mac — Apple Silicon</h3><div class="m">DMG for M1, M2, M3 and newer</div><div class="actions"><a class="button primary" href="https://github.com/sergii-ziborov/radiochron-electron/releases/download/desktop-v0.2.0-beta.2/RadioChron-Desktop-0.2.0-macOS-Apple-Silicon.dmg">Download</a></div></div>
-      <div class="card cut"><h3>Mac — Intel</h3><div class="m">DMG for Intel-based Macs</div><div class="actions"><a class="button primary" href="https://github.com/sergii-ziborov/radiochron-electron/releases/download/desktop-v0.2.0-beta.2/RadioChron-Desktop-0.2.0-macOS-Intel.dmg">Download</a></div></div>
+      <div class="card cut"><h3>Windows x64</h3><div class="m">Assisted NSIS installer (.exe)</div><div class="actions"><a class="button primary" href="https://github.com/sergii-ziborov/radiochron-electron/releases/download/desktop-v0.2.0-beta.3/RadioChron-Desktop-0.2.0-Windows-x64.exe">Download</a></div></div>
+      <div class="card cut"><h3>Mac — Apple Silicon</h3><div class="m">DMG for M1, M2, M3 and newer</div><div class="actions"><a class="button primary" href="https://github.com/sergii-ziborov/radiochron-electron/releases/download/desktop-v0.2.0-beta.3/RadioChron-Desktop-0.2.0-macOS-Apple-Silicon.dmg">Download</a></div></div>
+      <div class="card cut"><h3>Mac — Intel</h3><div class="m">DMG for Intel-based Macs</div><div class="actions"><a class="button primary" href="https://github.com/sergii-ziborov/radiochron-electron/releases/download/desktop-v0.2.0-beta.3/RadioChron-Desktop-0.2.0-macOS-Intel.dmg">Download</a></div></div>
     </div>
     <p class="beta-warning"><strong>Unsigned beta:</strong> Windows SmartScreen and macOS Gatekeeper
       may warn. The macOS builds are not Developer ID signed or notarized yet. Verify the SHA-256
-      file from the <a href="https://github.com/sergii-ziborov/radiochron-electron/releases/tag/desktop-v0.2.0-beta.2">release page</a> before testing.</p>
+      file from the <a href="https://github.com/sergii-ziborov/radiochron-electron/releases/tag/desktop-v0.2.0-beta.3">release page</a> before testing.</p>
     <h3 style="margin-top:34px">Build it yourself</h3>
     <div class="term cut">
       <div class="bar"><i></i><i></i><i></i></div>

@@ -5,9 +5,9 @@ Source for [radiochron.com](https://radiochron.com), a static website deployed w
 The deployable files live in `public/`. The site uses no client-side JavaScript, analytics, cookies, or telemetry.
 
 The Desktop page includes Electron-captured synthetic screenshots for the
-shared Wi-Fi/Bluetooth map, typed Bluetooth relationships, and filterable
-1/7/30-day presence analytics. No real SSID, address, or device identity is
-used in those images.
+shared Wi-Fi/Bluetooth map, OS-confirmed connected/paired Bluetooth links,
+unlinked radio observations, and filterable 1/7/30-day presence analytics.
+No real SSID, address, or device identity is used in those images.
 
 `public/data/bluetooth-assigned-numbers.json` is the downloadable, versioned
 company/service/appearance snapshot bundled with RadioChron Desktop. Its source
