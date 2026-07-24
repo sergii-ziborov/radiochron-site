@@ -19,6 +19,7 @@ revision and BSD-3-Clause attribution are embedded in the file and repeated in
 - [`radiochron`](https://github.com/sergii-ziborov/radiochron) — IoT-focused Rust Wi-Fi/BLE library
 - [`radiochron-mcp`](https://github.com/sergii-ziborov/radiochron-mcp) — MCP server
 - [`radiochron-js`](https://github.com/sergii-ziborov/radiochron-js) — standalone Node/npm library over the Rust core
+- [`radiochron-agent`](https://github.com/sergii-ziborov/radiochron-agent) — unattended Wi-Fi/BLE collector with durable spool and MQTT/OTLP/Prometheus export
 - [`radiochron-electron`](https://github.com/sergii-ziborov/radiochron-electron) — separate Windows/macOS Wi-Fi/BLE desktop application using `radiochron-js`
 
 ## Verify and run

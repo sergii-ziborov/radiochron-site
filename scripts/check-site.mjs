@@ -45,7 +45,7 @@ for (const file of htmlFiles) {
     }
   }
 
-  for (const retiredSurface of ["radiochron-agent", "radiochron-fleet"]) {
+  for (const retiredSurface of ["radiochron-fleet"]) {
     if (source.includes(retiredSurface)) {
       throw new Error(`${file} still promotes retired surface: ${retiredSurface}`);
     }
@@ -57,6 +57,7 @@ for (const repository of [
   "radiochron",
   "radiochron-mcp",
   "radiochron-js",
+  "radiochron-agent",
   "radiochron-electron",
   "radiochron-site",
 ]) {
