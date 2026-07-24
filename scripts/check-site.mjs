@@ -66,6 +66,9 @@ for (const repository of [
 
 
 const electron = await readFile(path.join(publicDir, "electron.html"), "utf8");
+if (!electron.includes("desktop-v0.2.0-beta.3")) {
+  throw new Error("electron.html does not point to the current Desktop beta");
+}
 const assignedNumbers = JSON.parse(
   await readFile(path.join(publicDir, "data", "bluetooth-assigned-numbers.json"), "utf8")
 );
