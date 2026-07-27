@@ -355,6 +355,7 @@ radiochron-esp-idf = { version = "0.2", features = ["nimble"] }
       <li class="done"><b>SHIPPED</b>Radio-to-Internet staged diagnosis across radio, authentication, IP, gateway, DNS and TCP</li>
       <li class="done"><b>SHIPPED</b>Portable <code>no_std + alloc</code> BLE identity/history detectors, ESP-IDF/NimBLE adapter, and native WinRT/BlueZ/CoreBluetooth scans through Node, MCP, Agent and Desktop</li>
       <li class="plan"><b>PLANNED</b>Cellular collectors — RSRP/RSRQ/SINR via Windows MBN and Linux ModemManager; for a field device the radio that matters may not be Wi-Fi</li>
+      <li class="done"><b>SHIPPED</b>Monitor-mode frame analysis — measured retry rate and deauthentication reason codes — with nl80211/<code>AF_PACKET</code> capture on Linux, BPF capture on macOS and ESP-IDF promiscuous mode; retention is bounded and configurable, because a collector must not accumulate its surroundings forever</li>
       <li class="done"><b>SHIPPED</b>CommonJS/ESM radiochron-js API with cancelable streams and RadioChron Desktop beta builds for Windows, Intel Mac and Apple Silicon</li>
       <li class="done"><b>PUBLISHED</b>radiochron and radiochron-agent on crates.io plus radiochron and radiochron-mcp on npm</li>
       <li class="plan"><b>PLANNED</b>Signed Windows releases plus Developer ID signing and notarization for macOS</li>
@@ -370,7 +371,11 @@ radiochron-esp-idf = { version = "0.2", features = ["nimble"] }
       <a href="/electron">desktop app</a>
       <a href="/license">licenses</a>
       <a href="/privacy">privacy</a>
+      <a href="mailto:contact@radiochron.com">contact@radiochron.com</a>
     </div>
+    <div class="note">Security reports go to <a href="mailto:security@radiochron.com">security@radiochron.com</a>.
+      This is radio diagnostic software: if you believe a finding can be forced to lie, or that a
+      collector discloses more than it should, that is worth reporting.</div>
     <div class="note">No telemetry. No cookies. No analytics. Nothing leaves your machine — the
       diagnostics run where the radio is, and stay there. SSIDs and BSSIDs are location-identifying;
       treat your chronicle accordingly before sharing it.<br><br>
