@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RadioChron — Rust Wi-Fi and BLE diagnostics for IoT, Agent, Node, MCP and Desktop</title>
-<meta name="description" content="RadioChron records Wi-Fi and BLE history, diagnoses radio-to-Internet incidents, and ships as a Rust core, durable IoT agent, streaming Node library, MCP server and desktop app.">
-<meta name="keywords" content="wifi diagnostics, bluetooth history, BLE beacon tracking, rust wifi library, MCP server, IoT monitoring, 802.11 analysis, embedded rust">
+<title>RadioChron — Know why Wi-Fi failed, even after it recovered</title>
+<meta name="description" content="RadioChron is a local-first Wi-Fi flight recorder. It records roaming, disconnect, RF, IP, DNS, TLS and connectivity evidence and turns it into one incident report.">
+<meta name="keywords" content="wifi flight recorder, wifi diagnostics, incident forensics, rust wifi library, MCP server, IoT monitoring, 802.11 analysis">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://radiochron.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="RadioChron">
-<meta property="og:title" content="RadioChron — the chronicle of your radio">
-<meta property="og:description" content="Pure-Rust Wi-Fi diagnostics and portable BLE history: radio-to-Internet verdicts, a durable agent, streaming Node API, MCP and Desktop.">
+<meta property="og:title" content="RadioChron — Know why Wi-Fi failed, even after it recovered">
+<meta property="og:description" content="Local-first Wi-Fi flight recorder: roam, disconnect, RF, IP, DNS and TLS evidence in one incident report.">
 <meta property="og:url" content="https://radiochron.com/">
 <meta property="og:image" content="https://radiochron.com/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="RadioChron — the chronicle of your radio">
-<meta name="twitter:description" content="Rust Wi-Fi diagnostics and BLE identity history: evidence from history, not data dumps. MIT/Apache-2.0.">
+<meta name="twitter:title" content="RadioChron — Know why Wi-Fi failed, even after it recovered">
+<meta name="twitter:description" content="Local-first Wi-Fi flight recorder for applications, endpoints and IoT. MIT/Apache-2.0.">
 <meta name="twitter:image" content="https://radiochron.com/og.png">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <script type="application/ld+json">
@@ -28,7 +28,7 @@
   "name": "RadioChron",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Windows, Linux, macOS",
-  "description": "Wi-Fi diagnostics and BLE identity history with a Rust core, durable IoT agent, streaming Node library, MCP server and Windows/macOS desktop app.",
+  "description": "Local-first Wi-Fi flight recorder with a Rust core, Node API, agent, MCP and desktop surfaces.",
   "url": "https://radiochron.com",
   "license": "https://radiochron.com/license",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
@@ -50,7 +50,7 @@
 <header>
   <div class="mark">
     <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect width="26" height="26" fill="#0D0D08"/><path d="M3 17 L7 17 9 8 12 21 15 12 17 17 23 17" fill="none" stroke="#FCEE0A" stroke-width="2.2"/></svg>
-    RADIOCHRON <span class="v">v0.4</span>
+    RADIOCHRON <span class="v">v0.6</span>
   </div>
   <nav>
     <a href="#verdict">verdict</a>
@@ -90,20 +90,27 @@
     </g>
   </svg>
   <div class="wrap">
-    <div class="tag">//: RADIO DIAGNOSTICS FOR MACHINES THAT CAN'T EXPLAIN THEMSELVES</div>
-    <h1>The chronicle<br>of your radio<span class="blink">_</span></h1>
-    <p class="sub"><strong>RadioChron</strong> is a Rust Wi-Fi diagnostics and BLE history engine
-      with an unattended agent, streaming Node API, MCP and desktop surfaces.
-      It records what the radio actually did — associations, roams, drops, reason codes —
-      and returns <strong>verdicts, not data dumps</strong>. A snapshot says “−58 dBm, fine”.
-      The chronicle says why it wasn't fine ten minutes ago.</p>
-    <svg class="pulse" viewBox="0 0 1200 48" preserveAspectRatio="none" aria-hidden="true">
-      <path class="base" d="M0 30 H180 L210 30 220 12 235 44 250 22 262 30 H470 L495 30 505 8 522 46 536 26 546 30 H800 L825 30 835 16 850 42 863 24 873 30 H1200" fill="none" stroke="#0D0D08" stroke-width="2.5"/>
-      <path class="sig" d="M0 30 H180 L210 30 220 12 235 44 250 22 262 30 H470 L495 30 505 8 522 46 536 26 546 30 H800 L825 30 835 16 850 42 863 24 873 30 H1200" fill="none" stroke="#0D0D08" stroke-width="3.2"/>
-    </svg>
+    <div class="tag">//: WI-FI FLIGHT RECORDER</div>
+    <h1>Know why Wi-Fi failed —<br>even after it recovered<span class="blink">_</span></h1>
+    <p class="sub"><strong>RadioChron</strong> is a local-first Wi-Fi flight recorder for applications,
+      endpoints and IoT devices. It records roaming, disconnect, RF, IP, DNS, TLS and connectivity
+      evidence and turns it into <strong>one incident report</strong> — so the outage is still
+      explainable after the link looks fine again.</p>
+    <div class="term cut">
+      <div class="bar"><i></i><i></i><i></i></div>
+<pre>12:04:13  RSSI -61 → -78
+12:04:14  roam AP-A → AP-B
+12:04:15  association OK
+12:04:16  gateway OK
+12:04:17  DNS FAIL
+12:04:20  DNS recovered
+
+Conclusion: Wi-Fi association recovered;
+application outage continued at DNS stage.</pre>
+    </div>
     <div class="stats">
       <div class="stat cut"><b>3</b><span>DEPENDENCIES</span></div>
-      <div class="stat cut"><b>13</b><span>CRATES, WHOLE TREE</span></div>
+      <div class="stat cut"><b>CORE 0.6</b><span>INCIDENT MODEL</span></div>
       <div class="stat cut"><b>~1.9&nbsp;MB</b><span>SERVER BINARY</span></div>
       <div class="stat cut"><b>0</b><span>C TOOLCHAIN NEEDED</span></div>
     </div>
@@ -207,10 +214,10 @@ rec.run_for(Duration::from_secs(3600))?;   <span class="c">// or own the loop: r
     <div class="term cut">
       <div class="bar"><i></i><i></i><i></i></div>
 <pre><span class="c"># a sensor that only reports link state pulls exactly that:</span>
-radiochron = { version = "0.4", default-features = false, features = ["status"] }
+radiochron = { version = "0.6", default-features = false, features = ["status"] }
 <span class="c"># portable no_std BLE history; ESP-IDF can add the real NimBLE collector:</span>
-radiochron = { version = "0.4", default-features = false, features = ["embedded", "ble"] }
-radiochron-esp-idf = { version = "0.2", features = ["nimble"] }
+radiochron = { version = "0.6", default-features = false, features = ["embedded", "ble"] }
+radiochron-esp-idf = { version = "0.3", features = ["nimble"] }
 <span class="c"># status · scan · analyze · sample · history · record · connectivity · ble</span></pre>
     </div>
     <div class="grid g2" style="margin-top:28px">
