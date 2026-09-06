@@ -4,6 +4,10 @@ Source for [radiochron.com](https://radiochron.com), a static website deployed w
 
 The deployable files live in `public/`. The site uses no client-side JavaScript, analytics, cookies, or telemetry.
 
+The `/blog/` section hosts long-form research notes. The first post explains the
+recovered-link paradox, the shared incident classifier, and how Desktop / MCP /
+Agent / Node keep one verdict.
+
 The Desktop page includes Electron-captured synthetic screenshots for the
 shared Wi-Fi/Bluetooth map, OS-confirmed connected/paired Bluetooth links,
 unlinked radio observations, and filterable 1/7/30-day presence analytics.

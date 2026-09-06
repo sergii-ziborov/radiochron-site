@@ -3,24 +3,60 @@ import path from "node:path";
 
 const root = path.resolve(import.meta.dirname, "..");
 const publicDir = path.join(root, "public");
-const htmlFiles = (await readdir(publicDir))
-  .filter((name) => name.endsWith(".html"))
-  .sort();
+
+async function collectHtmlFiles(dir, relative = "") {
+  const entries = await readdir(dir, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    const rel = relative ? `${relative}/${entry.name}` : entry.name;
+    const abs = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...(await collectHtmlFiles(abs, rel)));
+    } else if (entry.name.endsWith(".html")) {
+      files.push(rel.replaceAll("\\", "/"));
+    }
+  }
+  return files.sort();
+}
+
+const htmlFiles = await collectHtmlFiles(publicDir);
 
 if (htmlFiles.length === 0) {
   throw new Error("No HTML files found in public/");
 }
 
-function localTarget(rawValue) {
-  if (/^(?:https?:|mailto:|tel:|data:|#)/i.test(rawValue)) return null;
+function candidatePaths(rawValue) {
+  if (/^(?:https?:|mailto:|tel:|data:|#)/i.test(rawValue)) return [];
 
   const value = rawValue.split(/[?#]/, 1)[0];
-  if (!value) return null;
+  if (!value) return [];
 
   const normalized = value.startsWith("/") ? value.slice(1) : value;
-  if (!normalized) return "index.html";
-  if (path.extname(normalized)) return normalized;
-  return `${normalized.replace(/\/$/, "")}.html`;
+  if (!normalized) return ["index.html"];
+
+  const candidates = [];
+  if (path.extname(normalized)) {
+    candidates.push(normalized);
+  } else {
+    const trimmed = normalized.replace(/\/$/, "");
+    candidates.push(`${trimmed}.html`, `${trimmed}/index.html`, `${trimmed}/index.htm`);
+  }
+  return candidates;
+}
+
+async function assertLocalTarget(sourceFile, rawValue) {
+  const candidates = candidatePaths(rawValue);
+  if (candidates.length === 0) return;
+
+  for (const candidate of candidates) {
+    try {
+      await access(path.join(publicDir, candidate));
+      return;
+    } catch {
+      // try next
+    }
+  }
+  throw new Error(`${sourceFile} links to missing local file: ${rawValue}`);
 }
 
 for (const file of htmlFiles) {
@@ -36,13 +72,7 @@ for (const file of htmlFiles) {
   }
 
   for (const match of source.matchAll(/(?:href|src)=["']([^"']+)["']/gi)) {
-    const target = localTarget(match[1]);
-    if (!target) continue;
-    try {
-      await access(path.join(publicDir, target));
-    } catch {
-      throw new Error(`${file} links to missing local file: ${match[1]}`);
-    }
+    await assertLocalTarget(file, match[1]);
   }
 
   for (const retiredSurface of ["radiochron-fleet"]) {
@@ -65,6 +95,9 @@ for (const repository of [
   if (!index.includes(url)) throw new Error(`index.html is missing repository link: ${url}`);
 }
 
+if (!index.includes("/blog/")) {
+  throw new Error("index.html is missing the blog link");
+}
 
 const electron = await readFile(path.join(publicDir, "electron.html"), "utf8");
 if (!electron.includes("desktop-v0.2.0-beta.3")) {
@@ -104,14 +137,19 @@ for (const screenshot of [
   "bluetooth-presence",
   "channels",
 ]) {
-  const path = `/screenshots/radiochron-desktop-${screenshot}.png`;
-  if (!index.includes(path) || !electron.includes(path)) {
-    throw new Error(`desktop screenshot is not shown on both product pages: ${path}`);
+  const shotPath = `/screenshots/radiochron-desktop-${screenshot}.png`;
+  if (!index.includes(shotPath) || !electron.includes(shotPath)) {
+    throw new Error(`desktop screenshot is not shown on both product pages: ${shotPath}`);
   }
 }
 
 if (/<script\s+[^>]*src=/i.test(index)) {
   throw new Error("The static site must not load client-side scripts");
+}
+
+const blogPost = "blog/wifi-looks-fine-after-outage-flight-recorder/index.html";
+if (!htmlFiles.includes(blogPost)) {
+  throw new Error(`missing research post: ${blogPost}`);
 }
 
 console.log(`Verified ${htmlFiles.length} HTML files and their local links.`);

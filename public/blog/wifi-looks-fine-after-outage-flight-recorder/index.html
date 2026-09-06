@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why the Wi-Fi looks fine after the outage — RadioChron</title>
+<meta name="description" content="Wi-Fi that works now hides why it failed. How RadioChron's local flight recorder, honest evidence states and one deterministic classifier keep the black box.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://radiochron.com/blog/wifi-looks-fine-after-outage-flight-recorder/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="RadioChron">
+<meta property="og:title" content="Why the Wi-Fi looks fine after the outage">
+<meta property="og:description" content="How RadioChron's flight recorder and shared classifier keep a black box after the link recovers.">
+<meta property="og:url" content="https://radiochron.com/blog/wifi-looks-fine-after-outage-flight-recorder/">
+<meta property="og:image" content="https://radiochron.com/blog/media/desktop-overview.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Why the Wi-Fi looks fine after the outage">
+<meta name="twitter:description" content="Flight recorder, honest evidence states, one classifier across Desktop, MCP, Agent and Node.">
+<meta name="twitter:image" content="https://radiochron.com/blog/media/desktop-overview.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Why the Wi-Fi looks fine after the outage — and how RadioChron keeps the black box",
+  "datePublished": "2026-09-06",
+  "dateModified": "2026-09-06",
+  "author": { "@type": "Person", "name": "Sergii Ziborov", "url": "https://github.com/sergii-ziborov" },
+  "publisher": { "@type": "Organization", "name": "RadioChron", "url": "https://radiochron.com" },
+  "image": "https://radiochron.com/blog/media/desktop-overview.png",
+  "mainEntityOfPage": "https://radiochron.com/blog/wifi-looks-fine-after-outage-flight-recorder/",
+  "description": "How RadioChron records the window before and after a Wi-Fi fault and produces one identical verdict across surfaces."
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/styles.css?v=5">
+</head>
+<body>
+
+<header>
+  <a class="mark" href="/">
+    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect width="26" height="26" fill="#0D0D08"/><path d="M3 17 L7 17 9 8 12 21 15 12 17 17 23 17" fill="none" stroke="#FCEE0A" stroke-width="2.2"/></svg>
+    RADIOCHRON <span class="v">BLOG</span>
+  </a>
+  <nav>
+    <a href="/blog/">blog</a>
+    <a href="/electron">desktop</a>
+    <a href="/#surfaces">surfaces</a>
+    <a href="/privacy">privacy</a>
+    <a href="https://github.com/sergii-ziborov/radiochron">github</a>
+  </nav>
+</header>
+
+<section class="band pagehead" style="padding-top:26px;padding-bottom:20px">
+  <div class="wrap">
+    <div class="crumbs"><a href="/">radiochron.com</a> / <a href="/blog/">blog</a> / <b>flight recorder</b></div>
+    <div class="tag">//: RESEARCH · 2026-09-06</div>
+    <h1>Why the Wi-Fi looks fine<br>after the outage</h1>
+    <p class="post-dek">How RadioChron’s local flight recorder, honest evidence states and one
+      deterministic classifier keep the black box — so cause semantics do not drift
+      across Desktop, MCP, Agent and Node.</p>
+  </div>
+</section>
+
+<section class="band post-body">
+  <div class="wrap narrow">
+<article class="post">
+<p class="lede">Every Wi-Fi engineer has had this conversation. Someone says the network dropped for two minutes at 10:14. You open the laptop at 10:21. Signal bars are full, the gateway answers, DNS resolves, speed test is fine. You have nothing. The link healed itself and took the evidence with it.</p>
+
+<p>RadioChron exists for that gap. It is a local-first <strong>Wi-Fi flight recorder</strong>: a small Rust core plus a set of surfaces (Desktop, MCP, always-on agent, Node bindings, fleet inventory, an ESP-IDF adapter) that record what the link was doing <em>before</em> the fault, classify the fault with one deterministic ruleset, and say plainly what they could not observe. The positioning line is the whole design brief: <strong>know why Wi-Fi failed — even after it recovered.</strong></p>
+
+<p>This article is about the problem, the model RadioChron uses to attack it, and the specific engineering decision that holds the product together: one incident model, many surfaces.</p>
+
+<h2>1. The recovered-link paradox</h2>
+
+<p>Wi-Fi outages are short. Most of them are seconds to a couple of minutes: a roam that took too long, a DHCP renewal that stalled, a resolver that stopped answering, a driver that reset the adapter. By the time a human is looking at a diagnostic tool, the state has changed. Not slightly changed — <em>completely</em> changed. The BSSID is different, the RSSI is different, the DHCP lease is fresh, the DNS cache is warm.</p>
+
+<p>The paradox is that the system which recovered is the same system you are asking to explain the failure, and it has no memory of it. Modern operating systems are optimised to make the link healthy again, not to preserve a forensic record of how it became unhealthy. Recovery is destructive.</p>
+
+<p>So the engineer falls back on inference. “It was probably the AP.” “It was probably DNS.” “Have you tried a network reset?” Every one of these is a guess wearing the clothes of a diagnosis, and every one of them costs a real ticket, a real truck roll, or a real afternoon of a developer’s time. The cost is not that the guess is wrong; the cost is that nobody can tell whether it was right.</p>
+
+<figure class="shot">
+  <img src="/blog/media/desktop-overview.png" alt="RadioChron Desktop overview with synthetic Wi-Fi status" width="1200" height="750" loading="lazy">
+  <figcaption>RadioChron Desktop overview: current association, connectivity stage ladder, and recent evidence. The point is not the live numbers — it is that the recorded window still exists after the link has recovered. Synthetic SSIDs and MACs.</figcaption>
+</figure>
+
+<h2>2. What breaks in conventional tooling</h2>
+
+<p>Conventional Wi-Fi diagnostics are snapshot tools. They answer the question “what is the state right now?” with varying degrees of precision. That is a fine question at the moment of failure and a useless one seven minutes later.</p>
+
+<h3>ping and traceroute</h3>
+<p>Ping tells you whether an ICMP echo made it to a target and back <em>now</em>. It cannot tell you that the gateway was fine and the resolver was dead. It cannot tell you that the client was associated the whole time but had no IP for forty seconds. It collapses seven distinct failure stages into one boolean, and it only reports the boolean while you are watching.</p>
+
+<h3>OS Settings and the tray icon</h3>
+<p>The OS network UI is optimised for reassurance. “Connected, secured” is a statement about 802.11 association and key exchange, and the association layer is frequently the layer that is fine. A client can be perfectly associated to an AP whose uplink has failed, whose DHCP server is exhausted, or whose advertised resolver is dead. The UI will show the full bar set. It is not lying; it is answering a narrower question than the one you asked.</p>
+
+<h3>“Network reset”</h3>
+<p>The nuclear option: forget all networks, reinstall adapters, reboot. It is offered because it sometimes works, and it sometimes works because it happens to coincide with the underlying fault clearing. It is also an evidence-destruction event. If the cause was a driver reset loop, a sticky client that would not roam, or an AP with a failing key exchange, “network reset” removes the last traces of it and guarantees a repeat.</p>
+
+<h3>Windows Event Viewer</h3>
+<p>Windows actually keeps a good record. The WLAN-AutoConfig operational log carries connect, disconnect and failure events with numeric event IDs and reason codes, and each connection attempt is tagged with a ConnectionId. The problem is not that the data is missing; it is that the tooling people use to read it is built around localized message strings. Parsing “The network connection was disconnected because…” works on an English machine with one Windows build and breaks on the next. RadioChron reads the numeric IDs and reason codes, and uses ConnectionId continuity to tell a roam within one connection from a genuine fault that started a new one.</p>
+
+<p>The common thread: none of these tools has a <em>before</em>. They have a <em>now</em>, and sometimes a badly-parsed <em>log</em>. Neither is a timeline.</p>
+
+<h2>3. Flight-recorder model versus snapshot diagnostics</h2>
+
+<p>A flight recorder does not wait for you to ask. It keeps a bounded ring of recent observations at all times, and when something interesting happens it freezes that ring plus a short post-window and hands it over for analysis. That is exactly what the <code>flight</code> module in the <code>radiochron</code> core does, and it does it without any I/O.</p>
+
+<h3>The sample</h3>
+<p>One tick of observation is a <code>FlightSample</code>: monotonic timestamp, optional wall clock, interface id, association state, SSID and BSSID (identity fields the host may redact by policy), RSSI, rx/tx rates, channel, the connectivity stage that failed on this tick if any, and a <code>collector_healthy</code> flag. Cheap enough to take every second or two forever.</p>
+
+<h3>The policy</h3>
+<p>Retention is bounded by a host-supplied <code>FlightPolicy</code>. The defaults in core are deliberately conservative: a bounded sample ring, a short maximum age, a post-window after a trigger, a cooldown so a flapping link cannot generate a hundred incidents, and a signal-drop threshold. Hosts can tighten these; they cannot make the recorder unbounded.</p>
+
+<h3>The triggers</h3>
+<p>The recorder watches consecutive samples and opens a post-window on any of:</p>
+<ul>
+  <li><code>AssociationLost</code> — associated on the previous tick, not associated now.</li>
+  <li><code>BssidRoam</code> — associated, but the BSSID changed.</li>
+  <li><code>SignalDrop</code> — RSSI fell by at least the policy threshold between ticks.</li>
+  <li><code>ConnectivityStageFail</code> — a stage in the connectivity ladder failed.</li>
+  <li><code>CollectorGap</code> — the collector itself reported unhealthy. Losing the ability to observe is itself an event worth recording.</li>
+  <li><code>Manual</code> — an operator or host policy asked for a window.</li>
+</ul>
+
+<p>When the post-window elapses, the recorder emits a <code>FlightWindow</code>: the trigger, the trigger timestamp, and every sample still in the ring — which means the pre-trigger baseline is included. The host (in practice <code>radiochron-agent</code>) spools it. The core never sleeps, polls or touches a filesystem; it is a state machine you feed samples to.</p>
+
+<div class="term cut">
+  <div class="bar"><i></i><i></i><i></i></div>
+<pre><span class="c">// Host loop, simplified</span>
+let decision = recorder.observe(sample);
+if let Some(window) = recorder.take_closed_window() {
+    spool.write(window);          <span class="c">// agent's job</span>
+    evidence.flight_window = ...; <span class="c">// then classify</span>
+}</pre>
+</div>
+
+<p>Contrast this with a snapshot tool: the snapshot tool has one sample, taken at the wrong time, with no trigger context. The flight recorder has the sample from the wrong time <em>and</em> the window before it and after it, and it knows which trigger opened the capture.</p>
+
+<figure class="shot">
+  <img src="/blog/media/incident-timeline.svg" alt="Conceptual incident timeline: baseline ring, trigger, post-window, cooldown, then classification" width="1200" height="420" loading="lazy">
+  <figcaption>Conceptual diagram. Left to right: a rolling baseline ring of samples; a trigger (signal drop, roam, stage failure, collector gap); a fixed post-window; a cooldown that suppresses re-triggering; then the closed window flows into the classifier alongside the other evidence sections.</figcaption>
+</figure>
+
+<h2>4. Evidence honesty: available, unavailable, failed, not_requested</h2>
+
+<p>Here is a quiet bug that lives in most diagnostic tools: the absence of a signal is treated as a good signal. The history collector threw an exception, so the history list is empty, so “no reconnect loops detected.” The connectivity probe was never run, so “no stage failures.” The tool reports green because it did not look.</p>
+
+<p>RadioChron’s incident model refuses to do this. Every input to the classifier is wrapped in <code>EvidenceSection&lt;T&gt;</code>, which has exactly four states:</p>
+
+<ul>
+  <li><code>available</code> — the section was collected; here is the data.</li>
+  <li><code>unavailable</code> — the section was requested but cannot exist on this host, with a reason. Windows WLAN history on Linux, for example.</li>
+  <li><code>failed</code> — the collector tried and broke, with an error class and message.</li>
+  <li><code>not_requested</code> — the surface did not attempt this section. This is the default; a surface has to opt in.</li>
+</ul>
+
+<p>The classifier treats these differently and the report says so. Two hard rules sit at the top of <code>incident::classify</code>:</p>
+
+<ul>
+  <li>If <em>no</em> sections were requested, the assessment is <code>unknown</code> with the limitation that no evidence sections were requested.</li>
+  <li>If sections were requested but <em>none</em> came back available, the assessment is <code>unknown</code> with the limitation that requested sections were unavailable or failed.</li>
+</ul>
+
+<p>Below that, every <code>unavailable</code> or <code>failed</code> section becomes an evidence gap in the report. And the “looks healthy” check is asymmetric on purpose: a <code>not_requested</code> section does not block a healthy verdict, but a <code>failed</code> section does. If the history collector crashed, the classifier will not call the link healthy on the strength of the sections that survived.</p>
+
+<p>This is the line in ADR 001: <em>unknown or missing evidence must not be treated as healthy.</em> It sounds like a small thing. It is the difference between a tool that tells you what it knows and a tool that tells you what you want to hear.</p>
+
+<p>The evidence sections currently include <code>wifi_status</code>, <code>wifi_analysis</code>, <code>connectivity</code>, <code>history</code>, <code>chronicle</code>, <code>flight_window</code>, <code>adapter</code> and <code>ble</code>. Adapter fingerprints additionally carry their own evidence quality (<code>measured</code>, <code>reported</code> or <code>unknown</code>), because a driver version read from the OS is not the same grade of fact as a value the collector measured itself.</p>
+
+<h2>5. Deterministic classification, and why one classifier matters</h2>
+
+<p>The classifier is a pure function: <code>classify(&amp;IncidentEvidence) → IncidentReport</code>. No I/O, no clock, no randomness, no model weights. Same evidence in, byte-identical report out, on Windows, Linux, macOS, or an ESP32 (the module is <code>alloc</code>-only). That property is not an implementation detail; it is what makes the rest of the product possible.</p>
+
+<h3>What it produces</h3>
+<p>An <code>IncidentReport</code> carries a schema version, the observation timestamp, an <strong>assessment</strong> (<code>healthy</code>, <code>degraded</code>, <code>incident</code>, <code>unknown</code>), an ordered list of <strong>causes</strong>, the evidence references those causes cite, the gaps, action hints, and free-text limitations. Each cause has a kind, a confidence, a one-line summary, and evidence refs pointing at the specific thing that justified it: a Windows event record id, a connectivity stage name, an analysis finding id, a chronicle event, or a flight sample sequence number.</p>
+
+<p>The cause vocabulary follows the connectivity ladder plus the RF layer underneath it:</p>
+
+<div class="term cut">
+  <div class="bar"><i></i><i></i><i></i></div>
+<pre>rf_weak_signal          rf_contention           roaming_transition
+association_failure     authentication_failure  credential_mismatch
+access_point_key_exchange
+dhcp_or_ip_assignment   gateway_reachability    dns_failure
+tcp_service_failure     tls_failure             internet_upstream_failure
+collector_gap           non_wifi_failure        unknown</pre>
+</div>
+
+<h3>How it rules</h3>
+<p>Rules are table-driven and boring by design:</p>
+<ul>
+  <li>History finding <code>reconnect_loop</code> → <code>association_failure</code>, high confidence — Windows WLAN history shows a reconnect loop across ConnectionId changes.</li>
+  <li>History finding <code>credential_mismatch</code> → <code>credential_mismatch</code>, high; key-exchange failures map to <code>access_point_key_exchange</code>.</li>
+  <li>Connectivity failed stage <code>dns</code> → <code>dns_failure</code>, high — “DNS resolution failed while lower stages passed.” Each stage name maps one-to-one onto a cause kind.</li>
+  <li>Analysis finding <code>weak_signal_link</code> → <code>rf_weak_signal</code>, medium. Sticky-client roam candidates map to <code>roaming_transition</code> at <em>low</em> confidence — a plausible contributor, not a proven cause.</li>
+  <li>Status with interfaces reported but none associated → <code>association_failure</code>, medium. Status with no interfaces at all → <code>collector_gap</code>, not a Wi-Fi verdict.</li>
+</ul>
+
+<p>Causes are deduplicated by kind and sorted by a fixed priority that runs from the most actionable (credential mismatch, AP key exchange) down through the ladder to RF conditions, collector gaps and unknown. Assessment is then derived: any ladder-stage or auth cause → <code>incident</code>; only RF, roaming or collector-gap causes → <code>degraded</code>; nothing matched and the evidence actually looked clean → <code>healthy</code>; otherwise <code>unknown</code>.</p>
+
+<h3>Why one, and only one</h3>
+<p>Without a shared model, RadioChron was heading where every multi-surface product heads. The MCP server had its own <code>diagnose_incident</code> orchestration. The Electron app built its own Windows timeline — and classified WLAN events by matching localized message strings. The core already had a better Windows history detector reading numeric event IDs and ConnectionId continuity. Three surfaces, three slightly different opinions about what a “reconnect loop” is.</p>
+
+<p>That drift is fatal for a diagnostics product. If the Desktop says <code>roaming_transition</code> and the MCP tool says <code>association_failure</code> for the same sixty seconds of the same machine, the user is right to trust neither. The fix was not to synchronise three classifiers; it was to delete two of them.</p>
+
+<p><strong>Core owns</strong> the evidence shape, the report schema and the classifier. <strong>Surfaces own</strong> collection orchestration, scheduling, transport, storage and UI. MCP, Node, Agent and Desktop call the same <code>classify</code> over the same evidence types and may not invent parallel root-cause logic in JavaScript or MCP layers. Fixture parity tests across surfaces enforce it: the same JSON evidence must produce the same JSON report whether it went through Rust, Node or MCP.</p>
+
+<p>Determinism is what makes that enforceable. You cannot write a parity fixture against a classifier that consults the clock.</p>
+
+<figure class="shot">
+  <img src="/blog/media/desktop-analytics.png" alt="RadioChron Desktop Wi-Fi analytics with evidence timeline" width="1200" height="750" loading="lazy">
+  <figcaption>Desktop analytics: signal, rate and stage history over time. The UI draws this; it does not decide what it means. Verdict semantics come from the core classifier, unchanged. Synthetic data.</figcaption>
+</figure>
+
+<h2>6. Surfaces: orchestration without opinion</h2>
+
+<p>With cause logic pinned in core, each surface is free to do the thing it is actually good at.</p>
+
+<h3>Desktop (<code>radiochron-electron</code>)</h3>
+<p>The Desktop app is the timeline. It renders association history, channel environment, Bluetooth context, and closed incidents with their reports. On Windows it reads the WLAN-AutoConfig operational log by numeric event ID and reason code, threads events on ConnectionId so a roam inside one connection is not mistaken for a disconnect/reconnect fault, and passes normalised history evidence to core. It no longer parses message text. It can export an incident as a bundle. It does not classify.</p>
+
+<h3>MCP and CLI (<code>radiochron-mcp</code>, <code>radiochron doctor</code>)</h3>
+<p><code>radiochron doctor</code> is the on-demand collector: run it when someone says “the Wi-Fi is weird,” and it requests status, analysis, connectivity, history and adapter sections, marks each one available / unavailable / failed honestly, and prints the core report. The same orchestration is exposed as an MCP tool so an assistant or automation can ask for a verdict and receive a structured <code>IncidentReport</code> rather than prose. The MCP layer does not add its own reasoning about causes; it returns what core said, including the gaps and limitations.</p>
+
+<h3>Agent (<code>radiochron-agent</code>)</h3>
+<p>Always-on flight recording belongs to the agent and nowhere else — because a Desktop app that is not running and an MCP server that only wakes on request cannot be black boxes. The agent drives the core <code>FlightRecorder</code> with periodic samples, spools each closed <code>FlightWindow</code> locally, and attaches the window as flight evidence when it classifies. Nothing leaves the machine unless a human exports a bundle.</p>
+
+<h3>Node (<code>radiochron-js</code>)</h3>
+<p>The npm surface exposes <code>diagnose()</code> and <code>history()</code> on top of the shared classifier. If you are building an Electron app of your own, a support tool, or a CI job that checks a test rig’s Wi-Fi before a run, you get the identical report object the Desktop shows. There is no JavaScript reimplementation of the rules to fall out of date.</p>
+
+<h3>The transfer format</h3>
+<p>When a report needs to move between surfaces or people, it travels as <code>radiochron.incident_bundle.v1</code>, a JSON document with the <code>.rchron</code> extension. A bundle carries the producer (surface, surface version, core version), the platform, a privacy manifest, the <code>IncidentReport</code>, and optionally the raw evidence sections that produced it. A bundle produced by the agent on a laptop can be opened in Desktop, replayed through <code>classify</code>, and must produce the same verdict — because the verdict is a function of the evidence, not of where it was computed.</p>
+
+<figure class="shot">
+  <img src="/blog/media/desktop-channels.png" alt="RadioChron Desktop channel pressure view" width="1200" height="750" loading="lazy">
+  <figcaption>Channel environment. Co-channel contention and crowded-channel findings feed the classifier as <code>wifi_analysis</code> finding ids; the classifier decides whether they are a cause, a contributor, or noise. Synthetic access points.</figcaption>
+</figure>
+
+<h2>7. A worked mini-timeline</h2>
+
+<p>Here is the kind of incident that snapshot tools cannot explain and that the flight recorder was built for. Times are relative; values illustrate the shape, not a specific customer’s data.</p>
+
+<div class="term cut">
+  <div class="bar"><i></i><i></i><i></i></div>
+<pre>t-45s  associated  BSSID A  ch 36   RSSI -58   all stages ok
+t-30s  associated  BSSID A  ch 36   RSSI -63   all stages ok
+t-15s  associated  BSSID A  ch 36   RSSI -71   all stages ok
+t-5s   associated  BSSID A  ch 36   RSSI -79   all stages ok
+       <span class="c">← analysis: weak_signal_link, sticky_client_roam_candidate</span>
+t0     associated  BSSID B  ch 44   RSSI -55   all stages ok
+       <span class="c">← trigger: BssidRoam</span>
+t+3s   associated  BSSID B  ch 44   RSSI -54   dns FAILED
+t+8s   associated  BSSID B  ch 44   RSSI -54   dns FAILED
+t+14s  associated  BSSID B  ch 44   RSSI -55   all stages ok
+       <span class="c">← recovered</span>
+t+20s  post-window closes; window spooled; cooldown</pre>
+</div>
+
+<p>What the user experienced: video call froze for about ten seconds, then came back. What the OS showed throughout: connected, full bars. What <code>ping 1.1.1.1</code> would have shown at t+3s: replies. The radio, auth, DHCP and gateway stages were fine after the roam. The resolver was not — the classic case where association looks perfect while the application outage is at DNS.</p>
+
+<p>The agent hands core an <code>IncidentEvidence</code> with <code>flight_window</code> available, <code>connectivity</code> available with DNS failed, <code>wifi_analysis</code> available with the two finding ids from t−5s, <code>wifi_status</code> available and associated, and <code>history</code> marked <code>unavailable</code> because this host is macOS. The classifier returns, in shape:</p>
+
+<div class="term cut">
+  <div class="bar"><i></i><i></i><i></i></div>
+<pre>{
+  "schema_version": 1,
+  "assessment": "incident",
+  "causes": [
+    { "kind": "dns_failure", "confidence": "high",
+      "summary": "DNS resolution failed while lower stages passed" },
+    { "kind": "rf_weak_signal", "confidence": "medium",
+      "summary": "associated link signal is weak" },
+    { "kind": "roaming_transition", "confidence": "low",
+      "summary": "client appears sticky to a weaker BSS" }
+  ],
+  "gaps": [
+    { "section": "history",
+      "impact": "section unavailable: not a Windows host" }
+  ],
+  "limitations": [
+    "Windows WLAN history was not available; reconnect loops may be under-detected"
+  ]
+}</pre>
+</div>
+
+<p>Read the verdict the way the classifier built it. The assessment is <code>incident</code>, not <code>degraded</code>, because a ladder stage failed. The primary cause is DNS at high confidence. The weak signal and sticky-client behaviour are listed <em>after</em> it and at lower confidence: they are true, they are part of the story, but they are not the thing that froze the call. The gap and limitation are stated rather than hidden. The action hint points at the resolver, not at “reset your network.”</p>
+
+<p>Now the important part: this report is identical whether the agent produced it, whether you ran <code>radiochron doctor</code> at t+3s, whether you called <code>diagnose()</code> from Node, or whether you exported the <code>.rchron</code> bundle and opened it in Desktop a week later. Same evidence, same function, same verdict. That is the specific task the shared model solves for RadioChron — not “better Wi-Fi analysis” in the abstract, but the guarantee that cause semantics cannot drift between the surface that recorded the incident and the surface a human reads it on.</p>
+
+<figure class="shot">
+  <img src="/blog/media/desktop-bluetooth.png" alt="RadioChron Desktop Bluetooth overview" width="1200" height="750" loading="lazy">
+  <figcaption>BLE context. Bluetooth advertisement density on 2.4 GHz is collected as its own optional <code>ble</code> section — attached when relevant, marked <code>not_requested</code> when not, never silently assumed absent. Synthetic beacons.</figcaption>
+</figure>
+
+<h2>8. Privacy: what a bundle contains and what not to share</h2>
+
+<p>RadioChron has no telemetry. There is no account, no upload, no phone-home, no usage analytics. The agent spools to local disk; the Desktop reads local files; the MCP server answers local requests. This website is static and renders without JavaScript. That is the natural consequence of a tool whose entire value is that the evidence is on the machine where the fault happened.</p>
+
+<p>That said, a flight recorder is a surveillance device by construction, and an incident bundle is a document you might hand to a colleague, a vendor or a forum. Be deliberate about it.</p>
+
+<ul>
+  <li><strong>SSIDs and BSSIDs are location data.</strong> A BSSID is a globally unique AP identifier; public wardriving databases map many of them to coordinates. Redact both before sharing outside your organisation.</li>
+  <li><strong>The flight window is a movement log.</strong> A short ring of RSSI and BSSID transitions describes physically walking through a building. Treat it like one.</li>
+  <li><strong>Adapter fingerprints identify hardware.</strong> Driver and firmware versions are what fleet correlation needs, and also what an attacker looking for a known-vulnerable driver needs.</li>
+  <li><strong>Windows history contains ConnectionIds and event record ids</strong> that are meaningless outside the machine but can be joined against other logs from that machine.</li>
+</ul>
+
+<p>The bundle schema makes the choice explicit. Every <code>.rchron</code> can carry a privacy manifest with a level and the list of fields that were redacted. A recipient can see at a glance that BSSIDs were stripped, and the classifier still works on redacted documents because it reasons over finding ids and stage names, not over identifiers. The core is MIT / Apache-2.0 — you can read the collectors and confirm what gets written.</p>
+
+<h2>9. Who this is for</h2>
+
+<p>RadioChron is not a speed test, a heat-mapper or a packet capture tool. It is for the moment after those tools have already failed you — when the link is back, the user is annoyed, and the only honest answer available is “I don’t know, it works now.”</p>
+
+<p>It is for the developer whose IoT device drops off the network once a night and reconnects before anyone can attach a debugger, and who can now run the same recorder on the ESP32 and on the laptop that talks to it and get the same report schema from both.</p>
+
+<p>It is for the IT engineer who fields “Wi-Fi is bad on the third floor” and wants a spool of closed incidents with roam and stage evidence instead of a request to reproduce it on demand.</p>
+
+<p>It is for the support team that receives <code>.rchron</code> bundles from users and needs the verdict in the bundle to be the same verdict the user saw, computed by the same code, with the gaps written down.</p>
+
+<p>And it is for anyone building on top: the Node binding, the MCP tool and the fleet inventory exist so that you can put RadioChron’s evidence and verdict inside your own workflow without inheriting the job of keeping a second classifier honest.</p>
+
+<p class="closing">The link will recover. The question is whether anything remembers why it failed. RadioChron’s answer is a bounded ring, four evidence states, one pure function, and a bundle you control.</p>
+</article>
+
+    <div class="post-nav">
+      <a href="/blog/">← all posts</a>
+      <a href="/electron">try Desktop →</a>
+      <a href="https://github.com/sergii-ziborov/radiochron/blob/main/docs/adr/001-one-incident-model-many-surfaces.md">ADR 001 →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="big">RADIOCHRON</div>
+    <div class="cols">
+      <a href="/">home</a>
+      <a href="/blog/">blog</a>
+      <a href="/electron">desktop app</a>
+      <a href="/privacy">privacy</a>
+      <a href="https://github.com/sergii-ziborov/radiochron">github</a>
+    </div>
+    <div class="note">Screenshots use invented SSIDs and locally administered MACs.
+      No telemetry. Static HTML.<br><br>© 2026 Sergii Ziborov.</div>
+  </div>
+</footer>
+
+</body>
+</html>

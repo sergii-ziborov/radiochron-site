@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blog — RadioChron</title>
+<meta name="description" content="Research notes on Wi-Fi flight recording, incident forensics, and how RadioChron keeps a black box after the link recovers.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://radiochron.com/blog/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RadioChron">
+<meta property="og:title" content="Blog — RadioChron">
+<meta property="og:description" content="Research notes on Wi-Fi flight recording and incident forensics.">
+<meta property="og:url" content="https://radiochron.com/blog/">
+<meta property="og:image" content="https://radiochron.com/og.png">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/styles.css?v=5">
+</head>
+<body>
+
+<header>
+  <a class="mark" href="/">
+    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect width="26" height="26" fill="#0D0D08"/><path d="M3 17 L7 17 9 8 12 21 15 12 17 17 23 17" fill="none" stroke="#FCEE0A" stroke-width="2.2"/></svg>
+    RADIOCHRON <span class="v">BLOG</span>
+  </a>
+  <nav>
+    <a href="/#verdict">verdict</a>
+    <a href="/electron">desktop</a>
+    <a href="/blog/">blog</a>
+    <a href="/privacy">privacy</a>
+    <a href="https://github.com/sergii-ziborov/radiochron">github</a>
+  </nav>
+</header>
+
+<section class="band pagehead" style="padding-top:26px">
+  <div class="wrap">
+    <div class="crumbs"><a href="/">radiochron.com</a> / <b>blog</b></div>
+    <div class="tag">//: RESEARCH NOTES</div>
+    <h1>How the black box<br>stays honest</h1>
+    <p style="margin-top:20px;font-size:1.1rem;max-width:58ch">Long-form notes on the recovered-link paradox, the shared incident
+      model, and why RadioChron keeps cause logic in one Rust core across Desktop,
+      MCP, Agent and Node.</p>
+  </div>
+</section>
+
+<section class="band k">
+  <div class="wrap">
+    <div class="tag">//: POSTS</div>
+    <div class="grid g2 blog-index">
+      <a class="card cut post-card" href="/blog/wifi-looks-fine-after-outage-flight-recorder/">
+        <div class="m">2026-09-06 · research</div>
+        <h3>Why the Wi-Fi looks fine after the outage</h3>
+        <p>A recovered Wi-Fi link destroys the evidence you need to explain the outage.
+          How RadioChron records the window before and after a fault, marks what it could
+          not see, and produces one identical verdict across surfaces.</p>
+        <span class="read">read research →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="big">RADIOCHRON</div>
+    <div class="cols">
+      <a href="/">home</a>
+      <a href="/electron">desktop app</a>
+      <a href="/blog/">blog</a>
+      <a href="/license">licenses</a>
+      <a href="/privacy">privacy</a>
+    </div>
+    <div class="note">No telemetry. No cookies. No analytics. Static HTML.<br><br>
+      © 2026 Sergii Ziborov.</div>
+  </div>
+</footer>
+
+</body>
+</html>
