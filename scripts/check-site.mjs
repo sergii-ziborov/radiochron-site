@@ -99,6 +99,30 @@ if (!index.includes("/blog/")) {
   throw new Error("index.html is missing the blog link");
 }
 
+const sharedNav = [
+  '/#verdict',
+  '/#chronicle',
+  '/electron',
+  '/#surfaces',
+  '/#tools',
+  '/#straight',
+  '/#roadmap',
+  '/blog/',
+  '/electron#download',
+  '/privacy',
+  'https://github.com/sergii-ziborov/radiochron',
+];
+for (const file of htmlFiles) {
+  const source = await readFile(path.join(publicDir, file), "utf8");
+  const nav = source.match(/<nav>[\s\S]*?<\/nav>/);
+  if (!nav) throw new Error(`${file} is missing <nav>`);
+  for (const href of sharedNav) {
+    if (!nav[0].includes(`href="${href}"`)) {
+      throw new Error(`${file} nav is missing shared link: ${href}`);
+    }
+  }
+}
+
 const electron = await readFile(path.join(publicDir, "electron.html"), "utf8");
 if (!electron.includes("desktop-v0.2.0-beta.3")) {
   throw new Error("electron.html does not point to the current Desktop beta");
