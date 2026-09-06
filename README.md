@@ -4,6 +4,10 @@ Source for [radiochron.com](https://radiochron.com), a static website deployed w
 
 The deployable files live in `public/`. The site uses no client-side JavaScript, analytics, cookies, or telemetry.
 
+Visual language: bird's-eye maple parchment and brass dial accents inspired by
+the 1930s Chicago Radiochron cathedral radios (Clago), not a full-page neon
+yellow field — yellow remains an accent so the page stays readable.
+
 The `/blog/` section hosts long-form research notes. The first post explains the
 recovered-link paradox, the shared incident classifier, and how Desktop / MCP /
 Agent / Node keep one verdict.

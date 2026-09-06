@@ -43,13 +43,13 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="/styles.css?v=5">
+<link rel="stylesheet" href="/styles.css?v=6">
 </head>
 <body>
 
 <header>
   <div class="mark">
-    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect width="26" height="26" fill="#0D0D08"/><path d="M3 17 L7 17 9 8 12 21 15 12 17 17 23 17" fill="none" stroke="#FCEE0A" stroke-width="2.2"/></svg>
+    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect width="26" height="26" fill="#16130F"/><path d="M3 17 L7 17 9 8 12 21 15 12 17 17 23 17" fill="none" stroke="#D4A84B" stroke-width="2.2"/></svg>
     RADIOCHRON <span class="v">v0.6</span>
   </div>
   <nav>
@@ -69,21 +69,21 @@
 
 <section class="hero">
   <svg class="circ" width="520" height="560" viewBox="0 0 520 560" aria-hidden="true">
-    <g fill="none" stroke="#0D0D08" stroke-width="2" class="base">
+    <g fill="none" stroke="#16130F" stroke-width="2" class="base">
       <path d="M40 60 H240 L280 100 V240"/>
       <path d="M280 300 V460 L240 500 H80"/>
       <path d="M330 40 V180 L370 220 H470"/>
       <path d="M470 300 H390 L350 340 V520"/>
       <path d="M120 140 H60 V320"/>
     </g>
-    <g fill="none" stroke="#0D0D08" stroke-width="2.6">
+    <g fill="none" stroke="#16130F" stroke-width="2.6">
       <path class="sig" d="M40 60 H240 L280 100 V240"/>
       <path class="sig d1" d="M280 300 V460 L240 500 H80"/>
       <path class="sig d2" d="M330 40 V180 L370 220 H470"/>
       <path class="sig d3" d="M470 300 H390 L350 340 V520"/>
       <path class="sig d4" d="M120 140 H60 V320"/>
     </g>
-    <g fill="#0D0D08">
+    <g fill="#16130F">
       <rect x="234" y="54" width="12" height="12"/><rect x="274" y="234" width="12" height="12"/>
       <rect x="74" y="494" width="12" height="12"/><rect x="464" y="214" width="12" height="12"/>
       <rect x="344" y="514" width="12" height="12"/><rect x="54" y="314" width="12" height="12"/>
@@ -329,6 +329,36 @@ radiochron-esp-idf = { version = "0.3", features = ["nimble"] }
     <p style="margin-top:18px" class="m">Deliberately absent: saved Wi-Fi keys, MAC changes, adapter
       restarts, LAN sweeps. An autonomous model must not be able to leak a credential or drop you
       off the network. Calling them returns <code>-32601</code>.</p>
+
+    <h3 style="margin-top:36px;text-transform:uppercase">MCP and Node are siblings, not layers</h3>
+    <p style="margin-top:12px"><code>radiochron-mcp</code> and <code>radiochron</code> (npm) both call the same Rust
+      core classifier. MCP is for assistants and CLI orchestration over stdio.
+      The Node package is for embedding in apps, Electron, and services — it does
+      <strong>not</strong> speak MCP, and Desktop never routes through the MCP server.</p>
+    <div class="term cut">
+      <div class="bar"><i></i><i></i><i></i></div>
+<pre><span class="c"># Assistant / Claude Desktop — MCP over stdio</span>
+<span class="g">$</span> claude mcp add radiochron -- npx -y radiochron-mcp
+<span class="g">$</span> radiochron doctor --json
+
+<span class="c"># Application code — same core, in-process Node API</span>
+<span class="g">$</span> npm install radiochron</pre>
+    </div>
+    <div class="term cut">
+      <div class="bar"><i></i><i></i><i></i></div>
+<pre><span class="c">// Node: history + shared classifier (no MCP process)</span>
+import { getRadioChronCoreClient, createIncidentBundle } from 'radiochron';
+
+const rc = getRadioChronCoreClient();
+const history = await rc.history({ maxEvents: 80 });
+const report = await rc.diagnose({ includeBle: false });
+<span class="c">// report.assessment / report.causes match MCP diagnose_incident</span>
+
+const bundle = createIncidentBundle({
+  report,
+  producer: { surface: 'node', surface_version: '0.7.0', core_version: '0.6.0' }
+});</pre>
+    </div>
   </div>
 </section>
 

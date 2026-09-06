@@ -1,49 +1,49 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
   <title id="title">RadioChron flight-recorder window</title>
   <desc id="desc">Baseline ring, trigger, post-window, cooldown, then classify into IncidentReport</desc>
-  <rect width="1200" height="420" fill="#EAE6CB"/>
-  <text x="40" y="48" font-family="ui-monospace,Consolas,monospace" font-size="18" fill="#0D0D08" letter-spacing="2">//: FLIGHT WINDOW</text>
+  <rect width="1200" height="420" fill="#F3E9D0"/>
+  <text x="40" y="48" font-family="ui-monospace,Consolas,monospace" font-size="18" fill="#16130F" letter-spacing="2">//: FLIGHT WINDOW</text>
 
   <!-- baseline samples -->
   <text x="40" y="100" font-family="ui-monospace,Consolas,monospace" font-size="14" fill="#8f8b6d">BASELINE RING</text>
   <g>
-    <rect x="40" y="120" width="28" height="48" fill="#0D0D08"/>
-    <rect x="76" y="128" width="28" height="40" fill="#0D0D08" opacity=".85"/>
-    <rect x="112" y="124" width="28" height="44" fill="#0D0D08" opacity=".7"/>
-    <rect x="148" y="132" width="28" height="36" fill="#0D0D08" opacity=".55"/>
-    <rect x="184" y="118" width="28" height="50" fill="#0D0D08" opacity=".9"/>
-    <rect x="220" y="126" width="28" height="42" fill="#0D0D08" opacity=".65"/>
-    <rect x="256" y="130" width="28" height="38" fill="#0D0D08" opacity=".5"/>
-    <rect x="292" y="122" width="28" height="46" fill="#0D0D08" opacity=".8"/>
+    <rect x="40" y="120" width="28" height="48" fill="#16130F"/>
+    <rect x="76" y="128" width="28" height="40" fill="#16130F" opacity=".85"/>
+    <rect x="112" y="124" width="28" height="44" fill="#16130F" opacity=".7"/>
+    <rect x="148" y="132" width="28" height="36" fill="#16130F" opacity=".55"/>
+    <rect x="184" y="118" width="28" height="50" fill="#16130F" opacity=".9"/>
+    <rect x="220" y="126" width="28" height="42" fill="#16130F" opacity=".65"/>
+    <rect x="256" y="130" width="28" height="38" fill="#16130F" opacity=".5"/>
+    <rect x="292" y="122" width="28" height="46" fill="#16130F" opacity=".8"/>
   </g>
 
   <!-- trigger -->
-  <polygon points="360,110 384,168 336,168" fill="#FCEE0A" stroke="#0D0D08" stroke-width="3"/>
-  <text x="318" y="200" font-family="ui-monospace,Consolas,monospace" font-size="13" fill="#0D0D08">TRIGGER</text>
+  <polygon points="360,110 384,168 336,168" fill="#D4A84B" stroke="#16130F" stroke-width="3"/>
+  <text x="318" y="200" font-family="ui-monospace,Consolas,monospace" font-size="13" fill="#16130F">TRIGGER</text>
   <text x="300" y="220" font-family="ui-monospace,Consolas,monospace" font-size="11" fill="#8f8b6d">BssidRoam / StageFail</text>
 
   <!-- post window -->
-  <rect x="420" y="120" width="180" height="48" fill="#39D5DD" stroke="#0D0D08" stroke-width="3"/>
-  <text x="445" y="150" font-family="ui-monospace,Consolas,monospace" font-size="14" font-weight="700" fill="#0D0D08">POST-WINDOW</text>
+  <rect x="420" y="120" width="180" height="48" fill="#2AAEB6" stroke="#16130F" stroke-width="3"/>
+  <text x="445" y="150" font-family="ui-monospace,Consolas,monospace" font-size="14" font-weight="700" fill="#16130F">POST-WINDOW</text>
   <text x="450" y="200" font-family="ui-monospace,Consolas,monospace" font-size="12" fill="#8f8b6d">~20s after trigger</text>
 
   <!-- cooldown -->
-  <rect x="640" y="120" width="140" height="48" fill="#3c3c2b" stroke="#0D0D08" stroke-width="3"/>
-  <text x="665" y="150" font-family="ui-monospace,Consolas,monospace" font-size="14" font-weight="700" fill="#EAE6CB">COOLDOWN</text>
+  <rect x="640" y="120" width="140" height="48" fill="#3c3c2b" stroke="#16130F" stroke-width="3"/>
+  <text x="665" y="150" font-family="ui-monospace,Consolas,monospace" font-size="14" font-weight="700" fill="#F3E9D0">COOLDOWN</text>
   <text x="668" y="200" font-family="ui-monospace,Consolas,monospace" font-size="12" fill="#8f8b6d">suppress flaps</text>
 
   <!-- arrow -->
-  <path d="M800 144 H860" stroke="#0D0D08" stroke-width="4"/>
-  <polygon points="860,134 884,144 860,154" fill="#0D0D08"/>
+  <path d="M800 144 H860" stroke="#16130F" stroke-width="4"/>
+  <polygon points="860,134 884,144 860,154" fill="#16130F"/>
 
   <!-- classify box -->
-  <path d="M900 90 H1140 V210 L1124 226 H900 Z" fill="#0D0D08"/>
-  <text x="920" y="140" font-family="ui-monospace,Consolas,monospace" font-size="16" font-weight="700" fill="#FCEE0A">CLASSIFY</text>
-  <text x="920" y="168" font-family="ui-monospace,Consolas,monospace" font-size="13" fill="#39D5DD">IncidentReport</text>
+  <path d="M900 90 H1140 V210 L1124 226 H900 Z" fill="#16130F"/>
+  <text x="920" y="140" font-family="ui-monospace,Consolas,monospace" font-size="16" font-weight="700" fill="#D4A84B">CLASSIFY</text>
+  <text x="920" y="168" font-family="ui-monospace,Consolas,monospace" font-size="13" fill="#2AAEB6">IncidentReport</text>
   <text x="920" y="192" font-family="ui-monospace,Consolas,monospace" font-size="11" fill="#8f8b6d">one pure function</text>
 
   <!-- bottom legend -->
-  <text x="40" y="290" font-family="ui-monospace,Consolas,monospace" font-size="14" fill="#0D0D08">Evidence sections ’ available / unavailable / failed / not_requested</text>
-  <text x="40" y="320" font-family="ui-monospace,Consolas,monospace" font-size="14" fill="#0D0D08">Surfaces collect. Core decides. Bundle: radiochron.incident_bundle.v1 (.rchron)</text>
+  <text x="40" y="290" font-family="ui-monospace,Consolas,monospace" font-size="14" fill="#16130F">Evidence sections ï¿½ available / unavailable / failed / not_requested</text>
+  <text x="40" y="320" font-family="ui-monospace,Consolas,monospace" font-size="14" fill="#16130F">Surfaces collect. Core decides. Bundle: radiochron.incident_bundle.v1 (.rchron)</text>
   <text x="40" y="370" font-family="ui-monospace,Consolas,monospace" font-size="13" fill="#8f8b6d">Know why Wi-Fi failed  even after it recovered.</text>
 </svg>
